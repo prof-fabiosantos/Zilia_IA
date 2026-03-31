@@ -1,0 +1,501 @@
+﻿ID_Ticket,Data_Retorno,Modelo,Capacidade,Tipo,Sintoma_Cliente,Diagnostico_Tecnico,Status_Garantia
+RMA-001,2026-01-01,Corsair Dominator,64GB,DDR5,Erro no MemTest86,Degradação de chip (SPD),Aprovado
+RMA-002,2026-01-01,Kingston Fury,8GB,DDR5,Congelamento aleatório,Falha no endereçamento de bits,Aprovado
+RMA-003,2026-01-01,Corsair Vengeance,32GB,DDR4,Erro no MemTest86,Degradação de chip (SPD),Aprovado (Limpeza)
+RMA-004,2026-01-01,Crucial Pro,16GB,DDR5,Frequência instável,Falha no endereçamento de bits,Rejeitado (Dano Físico)
+RMA-005,2026-01-03,TeamGroup T-Force,32GB,DDR5,Sistema não liga,Capacitor SMD ausente,Aprovado
+RMA-006,2026-01-03,ADATA XPG,32GB,DDR4,Frequência instável,Pinos de contato oxidados,Aprovado
+RMA-007,2026-01-03,Corsair Dominator,64GB,DDR4,Não reconhece dual channel,Falha térmica em carga alta,Rejeitado (Modificação)
+RMA-008,2026-01-03,Corsair Vengeance,16GB,DDR5,Artefatos no vídeo (iGPU),Incompatibilidade de firmware,Rejeitado (Dano Físico)
+RMA-009,2026-01-05,Patriot Viper,32GB,DDR5,Blue Screen (BSOD),Falha no barramento de dados,Aprovado
+RMA-010,2026-01-05,Crucial Pro,16GB,DDR4,Reinicialização súbita,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-011,2026-01-05,Crucial Pro,16GB,DDR4,Luz de erro na placa-mãe,Falha no endereçamento de bits,Aprovado
+RMA-012,2026-01-07,Crucial Basics,64GB,DDR4,Luz de erro na placa-mãe,Falha no barramento de dados,Aprovado
+RMA-013,2026-01-07,Corsair Vengeance,8GB,DDR4,Frequência instável,Perfil XMP corrompido,Aprovado
+RMA-014,2026-01-07,ADATA XPG,32GB,DDR4,Erro no MemTest86,Falha térmica em carga alta,Aprovado
+RMA-015,2026-01-07,Kingston Fury,8GB,DDR4,Congelamento aleatório,Perfil XMP corrompido,Aprovado
+RMA-016,2026-01-07,Patriot Viper,32GB,DDR5,Não reconhece dual channel,Falha no barramento de dados,Aprovado
+RMA-017,2026-01-08,Patriot Viper,32GB,DDR4,Frequência instável,Perfil XMP corrompido,Aprovado (Limpeza)
+RMA-018,2026-01-08,Crucial Basics,16GB,DDR5,Erro no MemTest86,Falha térmica em carga alta,Aprovado
+RMA-019,2026-01-08,Patriot Viper,32GB,DDR4,Não reconhece dual channel,Falha no barramento de dados,Rejeitado (Dano Físico)
+RMA-020,2026-01-08,Kingston Fury,64GB,DDR5,Frequência instável,Falha no barramento de dados,Rejeitado (Modificação)
+RMA-021,2026-01-09,Crucial Basics,16GB,DDR4,Não reconhece dual channel,Erro de paridade ECC,Aprovado
+RMA-022,2026-01-10,TeamGroup T-Force,16GB,DDR5,Artefatos no vídeo (iGPU),Degradação de chip (SPD),Rejeitado (Dano Físico)
+RMA-023,2026-01-10,Crucial Pro,64GB,DDR4,Reinicialização súbita,Perfil XMP corrompido,Aprovado
+RMA-024,2026-01-10,ADATA XPG,64GB,DDR4,Artefatos no vídeo (iGPU),Erro de paridade ECC,Aprovado (Limpeza)
+RMA-025,2026-01-11,Kingston Fury,32GB,DDR4,Luz de erro na placa-mãe,Pinos de contato oxidados,Aprovado
+RMA-026,2026-01-11,Crucial Pro,32GB,DDR4,Erro no MemTest86,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-027,2026-01-12,ADATA XPG,8GB,DDR4,Erro no MemTest86,Capacitor SMD ausente,Aprovado
+RMA-028,2026-01-12,Patriot Viper,16GB,DDR5,Luz de erro na placa-mãe,Perfil XMP corrompido,Aprovado
+RMA-029,2026-01-12,Corsair Dominator,8GB,DDR5,Artefatos no vídeo (iGPU),Degradação de chip (SPD),Aprovado
+RMA-030,2026-01-12,Corsair Dominator,16GB,DDR4,Frequência instável,Curto-circuito no PCB,Aprovado (Limpeza)
+RMA-031,2026-01-13,Corsair Dominator,64GB,DDR4,Congelamento aleatório,Erro de paridade ECC,Aprovado
+RMA-032,2026-01-13,Kingston Fury,32GB,DDR5,Reinicialização súbita,Falha no barramento de dados,Rejeitado (Modificação)
+RMA-033,2026-01-14,Patriot Viper,8GB,DDR4,Congelamento aleatório,Falha no endereçamento de bits,Aprovado
+RMA-034,2026-01-14,TeamGroup T-Force,8GB,DDR5,Não reconhece dual channel,Falha no barramento de dados,Rejeitado (Dano Físico)
+RMA-035,2026-01-14,ADATA XPG,16GB,DDR5,Frequência instável,Falha no endereçamento de bits,Rejeitado (Dano Físico)
+RMA-036,2026-01-15,TeamGroup T-Force,32GB,DDR5,Não reconhece dual channel,Pinos de contato oxidados,Rejeitado (Dano Físico)
+RMA-037,2026-01-15,Crucial Basics,32GB,DDR4,Performance abaixo do esperado,Falha térmica em carga alta,Rejeitado (Modificação)
+RMA-038,2026-01-16,Corsair Vengeance,8GB,DDR5,Congelamento aleatório,Falha no barramento de dados,Aprovado
+RMA-039,2026-01-16,ADATA XPG,32GB,DDR5,Artefatos no vídeo (iGPU),Erro de paridade ECC,Rejeitado (Dano Físico)
+RMA-040,2026-01-16,Patriot Viper,64GB,DDR5,Frequência instável,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-041,2026-01-16,Crucial Basics,32GB,DDR4,Artefatos no vídeo (iGPU),Pinos de contato oxidados,Aprovado (Limpeza)
+RMA-042,2026-01-16,Patriot Viper,16GB,DDR4,Frequência instável,Falha no barramento de dados,Rejeitado (Dano Físico)
+RMA-043,2026-01-17,TeamGroup T-Force,8GB,DDR5,Sistema não liga,Erro de paridade ECC,Aprovado
+RMA-044,2026-01-17,Corsair Vengeance,16GB,DDR5,Blue Screen (BSOD),Incompatibilidade de firmware,Aprovado
+RMA-045,2026-01-17,Crucial Basics,64GB,DDR4,Erro no MemTest86,Degradação de chip (SPD),Aprovado
+RMA-046,2026-01-17,Corsair Vengeance,32GB,DDR4,Artefatos no vídeo (iGPU),Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-047,2026-01-19,Corsair Dominator,8GB,DDR4,Performance abaixo do esperado,Capacitor SMD ausente,Aprovado
+RMA-048,2026-01-19,Crucial Pro,32GB,DDR4,Artefatos no vídeo (iGPU),Degradação de chip (SPD),Aprovado
+RMA-049,2026-01-20,TeamGroup T-Force,64GB,DDR4,Performance abaixo do esperado,Incompatibilidade de firmware,Aprovado
+RMA-050,2026-01-20,Corsair Vengeance,32GB,DDR4,Congelamento aleatório,Curto-circuito no PCB,Aprovado
+RMA-051,2026-01-20,Crucial Basics,8GB,DDR4,Artefatos no vídeo (iGPU),Erro de paridade ECC,Aprovado
+RMA-052,2026-01-20,ADATA XPG,8GB,DDR5,Performance abaixo do esperado,Falha térmica em carga alta,Aprovado
+RMA-053,2026-01-20,Patriot Viper,32GB,DDR5,Performance abaixo do esperado,Falha térmica em carga alta,Aprovado
+RMA-054,2026-01-21,Corsair Vengeance,32GB,DDR5,Sistema não liga,Capacitor SMD ausente,Aprovado
+RMA-055,2026-01-21,G.Skill Trident Z,16GB,DDR4,Luz de erro na placa-mãe,Capacitor SMD ausente,Aprovado
+RMA-056,2026-01-22,ADATA XPG,16GB,DDR5,Congelamento aleatório,Erro de paridade ECC,Aprovado
+RMA-057,2026-01-22,G.Skill Trident Z,32GB,DDR5,Artefatos no vídeo (iGPU),Erro de paridade ECC,Aprovado
+RMA-058,2026-01-23,Kingston Fury,8GB,DDR4,Não reconhece dual channel,Falha térmica em carga alta,Aprovado
+RMA-059,2026-01-23,Corsair Vengeance,16GB,DDR5,Reinicialização súbita,Pinos de contato oxidados,Rejeitado (Dano Físico)
+RMA-060,2026-01-24,Kingston Fury,64GB,DDR4,Performance abaixo do esperado,Erro de paridade ECC,Aprovado
+RMA-061,2026-01-24,Corsair Vengeance,32GB,DDR5,Artefatos no vídeo (iGPU),Degradação de chip (SPD),Aprovado
+RMA-062,2026-01-25,G.Skill Trident Z,8GB,DDR5,Performance abaixo do esperado,Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-063,2026-01-25,Patriot Viper,16GB,DDR5,Luz de erro na placa-mãe,Degradação de chip (SPD),Aprovado
+RMA-064,2026-01-26,Crucial Basics,16GB,DDR4,Performance abaixo do esperado,Falha no barramento de dados,Aprovado
+RMA-065,2026-01-26,Corsair Dominator,32GB,DDR4,Luz de erro na placa-mãe,Erro de paridade ECC,Aprovado
+RMA-066,2026-01-27,Kingston Fury,32GB,DDR4,Performance abaixo do esperado,Erro de paridade ECC,Aprovado
+RMA-067,2026-01-27,Corsair Dominator,8GB,DDR5,Luz de erro na placa-mãe,Falha no barramento de dados,Aprovado
+RMA-068,2026-01-28,Crucial Pro,8GB,DDR5,Sistema não liga,Falha no endereçamento de bits,Aprovado (Limpeza)
+RMA-069,2026-01-28,TeamGroup T-Force,8GB,DDR4,Congelamento aleatório,Perfil XMP corrompido,Aprovado (Limpeza)
+RMA-070,2026-01-28,Corsair Dominator,8GB,DDR4,Reinicialização súbita,Curto-circuito no PCB,Aprovado
+RMA-071,2026-01-29,Corsair Dominator,8GB,DDR4,Reinicialização súbita,Falha térmica em carga alta,Rejeitado (Dano Físico)
+RMA-072,2026-01-30,ADATA XPG,64GB,DDR5,Congelamento aleatório,Erro de paridade ECC,Aprovado
+RMA-073,2026-01-31,Corsair Vengeance,32GB,DDR5,Artefatos no vídeo (iGPU),Falha térmica em carga alta,Rejeitado (Dano Físico)
+RMA-074,2026-01-31,Corsair Dominator,32GB,DDR4,Reinicialização súbita,Degradação de chip (SPD),Rejeitado (Modificação)
+RMA-075,2026-02-01,Kingston Fury,8GB,DDR5,Erro no MemTest86,Perfil XMP corrompido,Aprovado
+RMA-076,2026-02-01,Patriot Viper,64GB,DDR5,Erro no MemTest86,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-077,2026-02-01,Corsair Vengeance,32GB,DDR5,Reinicialização súbita,Perfil XMP corrompido,Aprovado
+RMA-078,2026-02-01,Crucial Pro,16GB,DDR5,Frequência instável,Erro de paridade ECC,Aprovado
+RMA-079,2026-02-01,Patriot Viper,64GB,DDR5,Performance abaixo do esperado,Degradação de chip (SPD),Aprovado
+RMA-080,2026-02-02,ADATA XPG,16GB,DDR5,Congelamento aleatório,Falha no endereçamento de bits,Aprovado
+RMA-081,2026-02-03,Corsair Dominator,64GB,DDR5,Performance abaixo do esperado,Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-082,2026-02-04,TeamGroup T-Force,64GB,DDR5,Blue Screen (BSOD),Perfil XMP corrompido,Aprovado
+RMA-083,2026-02-04,G.Skill Trident Z,64GB,DDR4,Congelamento aleatório,Curto-circuito no PCB,Rejeitado (Dano Físico)
+RMA-084,2026-02-04,Corsair Vengeance,64GB,DDR5,Artefatos no vídeo (iGPU),Incompatibilidade de firmware,Aprovado
+RMA-085,2026-02-04,ADATA XPG,16GB,DDR4,Luz de erro na placa-mãe,Perfil XMP corrompido,Aprovado
+RMA-086,2026-02-05,Crucial Basics,8GB,DDR4,Frequência instável,Falha no endereçamento de bits,Aprovado
+RMA-087,2026-02-05,Patriot Viper,16GB,DDR5,Sistema não liga,Curto-circuito no PCB,Aprovado
+RMA-088,2026-02-05,Corsair Dominator,64GB,DDR5,Frequência instável,Erro de paridade ECC,Aprovado (Limpeza)
+RMA-089,2026-02-05,Kingston Fury,8GB,DDR4,Congelamento aleatório,Falha no endereçamento de bits,Aprovado
+RMA-090,2026-02-05,G.Skill Trident Z,8GB,DDR4,Erro no MemTest86,Curto-circuito no PCB,Aprovado
+RMA-091,2026-02-05,Corsair Vengeance,8GB,DDR5,Performance abaixo do esperado,Incompatibilidade de firmware,Aprovado
+RMA-092,2026-02-06,Patriot Viper,8GB,DDR5,Luz de erro na placa-mãe,Falha no endereçamento de bits,Aprovado
+RMA-093,2026-02-06,Patriot Viper,16GB,DDR5,Luz de erro na placa-mãe,Capacitor SMD ausente,Aprovado
+RMA-094,2026-02-07,G.Skill Trident Z,64GB,DDR5,Luz de erro na placa-mãe,Degradação de chip (SPD),Aprovado
+RMA-095,2026-02-08,Kingston Fury,64GB,DDR5,Reinicialização súbita,Incompatibilidade de firmware,Aprovado (Limpeza)
+RMA-096,2026-02-08,Crucial Pro,16GB,DDR4,Blue Screen (BSOD),Falha no endereçamento de bits,Aprovado
+RMA-097,2026-02-08,G.Skill Trident Z,64GB,DDR4,Blue Screen (BSOD),Falha térmica em carga alta,Aprovado
+RMA-098,2026-02-09,Corsair Dominator,32GB,DDR4,Não reconhece dual channel,Falha no endereçamento de bits,Aprovado
+RMA-099,2026-02-09,ADATA XPG,64GB,DDR5,Não reconhece dual channel,Falha no endereçamento de bits,Aprovado (Limpeza)
+RMA-100,2026-02-09,Crucial Pro,32GB,DDR5,Luz de erro na placa-mãe,Falha no endereçamento de bits,Aprovado
+RMA-101,2026-02-10,TeamGroup T-Force,8GB,DDR4,Frequência instável,Erro de paridade ECC,Aprovado
+RMA-102,2026-02-10,Patriot Viper,32GB,DDR5,Artefatos no vídeo (iGPU),Incompatibilidade de firmware,Aprovado
+RMA-103,2026-02-10,TeamGroup T-Force,64GB,DDR4,Artefatos no vídeo (iGPU),Falha no barramento de dados,Aprovado
+RMA-104,2026-02-10,Crucial Basics,16GB,DDR5,Sistema não liga,Erro de paridade ECC,Aprovado
+RMA-105,2026-02-10,Corsair Dominator,32GB,DDR4,Frequência instável,Incompatibilidade de firmware,Rejeitado (Modificação)
+RMA-106,2026-02-11,G.Skill Trident Z,16GB,DDR5,Reinicialização súbita,Degradação de chip (SPD),Aprovado
+RMA-107,2026-02-11,Crucial Basics,8GB,DDR4,Performance abaixo do esperado,Perfil XMP corrompido,Aprovado
+RMA-108,2026-02-11,G.Skill Trident Z,16GB,DDR4,Congelamento aleatório,Falha térmica em carga alta,Aprovado
+RMA-109,2026-02-12,Patriot Viper,8GB,DDR5,Sistema não liga,Erro de paridade ECC,Rejeitado (Modificação)
+RMA-110,2026-02-12,G.Skill Trident Z,64GB,DDR4,Não reconhece dual channel,Incompatibilidade de firmware,Aprovado
+RMA-111,2026-02-13,Kingston Fury,32GB,DDR4,Congelamento aleatório,Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-112,2026-02-13,Corsair Vengeance,32GB,DDR5,Blue Screen (BSOD),Pinos de contato oxidados,Aprovado
+RMA-113,2026-02-13,G.Skill Trident Z,64GB,DDR5,Luz de erro na placa-mãe,Perfil XMP corrompido,Aprovado (Limpeza)
+RMA-114,2026-02-14,Crucial Basics,32GB,DDR4,Não reconhece dual channel,Curto-circuito no PCB,Aprovado
+RMA-115,2026-02-14,Corsair Vengeance,64GB,DDR4,Não reconhece dual channel,Falha no barramento de dados,Aprovado
+RMA-116,2026-02-15,G.Skill Trident Z,8GB,DDR5,Frequência instável,Pinos de contato oxidados,Aprovado
+RMA-117,2026-02-15,Corsair Vengeance,32GB,DDR5,Luz de erro na placa-mãe,Pinos de contato oxidados,Aprovado (Limpeza)
+RMA-118,2026-02-16,ADATA XPG,8GB,DDR5,Sistema não liga,Falha no barramento de dados,Aprovado (Limpeza)
+RMA-119,2026-02-16,Crucial Pro,8GB,DDR5,Artefatos no vídeo (iGPU),Falha no endereçamento de bits,Aprovado
+RMA-120,2026-02-17,G.Skill Trident Z,64GB,DDR5,Erro no MemTest86,Erro de paridade ECC,Aprovado
+RMA-121,2026-02-17,Crucial Pro,64GB,DDR5,Blue Screen (BSOD),Curto-circuito no PCB,Rejeitado (Modificação)
+RMA-122,2026-02-18,Crucial Basics,16GB,DDR4,Erro no MemTest86,Incompatibilidade de firmware,Aprovado
+RMA-123,2026-02-19,Patriot Viper,16GB,DDR4,Blue Screen (BSOD),Degradação de chip (SPD),Rejeitado (Dano Físico)
+RMA-124,2026-02-19,G.Skill Trident Z,16GB,DDR5,Sistema não liga,Capacitor SMD ausente,Aprovado
+RMA-125,2026-02-19,G.Skill Trident Z,64GB,DDR5,Reinicialização súbita,Pinos de contato oxidados,Aprovado
+RMA-126,2026-02-19,Crucial Pro,8GB,DDR4,Luz de erro na placa-mãe,Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-127,2026-02-19,Corsair Vengeance,8GB,DDR4,Luz de erro na placa-mãe,Falha no barramento de dados,Aprovado
+RMA-128,2026-02-20,G.Skill Trident Z,64GB,DDR5,Performance abaixo do esperado,Falha térmica em carga alta,Rejeitado (Dano Físico)
+RMA-129,2026-02-20,Crucial Pro,16GB,DDR4,Frequência instável,Curto-circuito no PCB,Aprovado
+RMA-130,2026-02-20,G.Skill Trident Z,32GB,DDR4,Artefatos no vídeo (iGPU),Falha térmica em carga alta,Aprovado
+RMA-131,2026-02-20,TeamGroup T-Force,32GB,DDR5,Reinicialização súbita,Erro de paridade ECC,Rejeitado (Dano Físico)
+RMA-132,2026-02-21,Corsair Vengeance,32GB,DDR5,Congelamento aleatório,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-133,2026-02-21,G.Skill Trident Z,64GB,DDR4,Não reconhece dual channel,Pinos de contato oxidados,Aprovado
+RMA-134,2026-02-21,Crucial Basics,64GB,DDR5,Reinicialização súbita,Falha térmica em carga alta,Rejeitado (Dano Físico)
+RMA-135,2026-02-21,Crucial Pro,32GB,DDR5,Reinicialização súbita,Falha térmica em carga alta,Aprovado
+RMA-136,2026-02-21,ADATA XPG,64GB,DDR4,Não reconhece dual channel,Falha térmica em carga alta,Aprovado
+RMA-137,2026-02-21,Corsair Dominator,32GB,DDR4,Erro no MemTest86,Falha no barramento de dados,Aprovado
+RMA-138,2026-02-22,Kingston Fury,8GB,DDR4,Sistema não liga,Falha térmica em carga alta,Rejeitado (Dano Físico)
+RMA-139,2026-02-22,Crucial Pro,16GB,DDR5,Performance abaixo do esperado,Perfil XMP corrompido,Aprovado
+RMA-140,2026-02-23,TeamGroup T-Force,8GB,DDR4,Erro no MemTest86,Capacitor SMD ausente,Aprovado
+RMA-141,2026-02-23,Kingston Fury,16GB,DDR5,Sistema não liga,Pinos de contato oxidados,Aprovado
+RMA-142,2026-02-24,Corsair Dominator,16GB,DDR4,Luz de erro na placa-mãe,Pinos de contato oxidados,Aprovado
+RMA-143,2026-02-24,Corsair Dominator,64GB,DDR4,Erro no MemTest86,Curto-circuito no PCB,Aprovado
+RMA-144,2026-02-24,Patriot Viper,16GB,DDR4,Frequência instável,Perfil XMP corrompido,Aprovado
+RMA-145,2026-02-24,Crucial Basics,64GB,DDR4,Sistema não liga,Incompatibilidade de firmware,Aprovado
+RMA-146,2026-02-24,Kingston Fury,16GB,DDR4,Artefatos no vídeo (iGPU),Degradação de chip (SPD),Aprovado
+RMA-147,2026-02-24,Crucial Pro,16GB,DDR4,Performance abaixo do esperado,Curto-circuito no PCB,Aprovado
+RMA-148,2026-02-25,Crucial Basics,16GB,DDR5,Frequência instável,Erro de paridade ECC,Aprovado
+RMA-149,2026-02-26,Patriot Viper,16GB,DDR5,Performance abaixo do esperado,Capacitor SMD ausente,Rejeitado (Modificação)
+RMA-150,2026-02-26,Crucial Basics,64GB,DDR5,Frequência instável,Falha térmica em carga alta,Rejeitado (Dano Físico)
+RMA-151,2026-02-27,Corsair Dominator,32GB,DDR4,Sistema não liga,Falha no barramento de dados,Aprovado
+RMA-152,2026-02-27,TeamGroup T-Force,64GB,DDR4,Reinicialização súbita,Perfil XMP corrompido,Aprovado
+RMA-153,2026-02-28,Crucial Basics,32GB,DDR5,Congelamento aleatório,Capacitor SMD ausente,Aprovado
+RMA-154,2026-03-01,Crucial Basics,16GB,DDR5,Sistema não liga,Curto-circuito no PCB,Aprovado
+RMA-155,2026-03-01,Patriot Viper,32GB,DDR4,Luz de erro na placa-mãe,Falha no barramento de dados,Aprovado
+RMA-156,2026-03-02,Crucial Pro,16GB,DDR5,Erro no MemTest86,Pinos de contato oxidados,Aprovado
+RMA-157,2026-03-02,Patriot Viper,64GB,DDR4,Erro no MemTest86,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-158,2026-03-02,Crucial Pro,32GB,DDR5,Reinicialização súbita,Degradação de chip (SPD),Aprovado (Limpeza)
+RMA-159,2026-03-03,Crucial Basics,64GB,DDR5,Não reconhece dual channel,Incompatibilidade de firmware,Aprovado
+RMA-160,2026-03-03,Crucial Pro,32GB,DDR4,Congelamento aleatório,Falha no barramento de dados,Aprovado
+RMA-161,2026-03-03,G.Skill Trident Z,32GB,DDR4,Performance abaixo do esperado,Falha térmica em carga alta,Rejeitado (Dano Físico)
+RMA-162,2026-03-03,G.Skill Trident Z,16GB,DDR5,Congelamento aleatório,Degradação de chip (SPD),Aprovado
+RMA-163,2026-03-03,Patriot Viper,16GB,DDR4,Luz de erro na placa-mãe,Erro de paridade ECC,Aprovado
+RMA-164,2026-03-05,ADATA XPG,64GB,DDR4,Blue Screen (BSOD),Falha no barramento de dados,Rejeitado (Modificação)
+RMA-165,2026-03-05,Crucial Basics,16GB,DDR5,Artefatos no vídeo (iGPU),Falha térmica em carga alta,Aprovado
+RMA-166,2026-03-05,Patriot Viper,16GB,DDR4,Reinicialização súbita,Erro de paridade ECC,Aprovado
+RMA-167,2026-03-06,Corsair Vengeance,32GB,DDR5,Não reconhece dual channel,Falha no endereçamento de bits,Aprovado
+RMA-168,2026-03-06,ADATA XPG,64GB,DDR5,Congelamento aleatório,Erro de paridade ECC,Aprovado (Limpeza)
+RMA-169,2026-03-06,G.Skill Trident Z,8GB,DDR4,Congelamento aleatório,Curto-circuito no PCB,Rejeitado (Modificação)
+RMA-170,2026-03-07,Corsair Dominator,64GB,DDR4,Erro no MemTest86,Curto-circuito no PCB,Aprovado
+RMA-171,2026-03-08,Kingston Fury,16GB,DDR5,Não reconhece dual channel,Falha térmica em carga alta,Aprovado (Limpeza)
+RMA-172,2026-03-08,ADATA XPG,8GB,DDR5,Congelamento aleatório,Incompatibilidade de firmware,Aprovado
+RMA-173,2026-03-09,TeamGroup T-Force,8GB,DDR5,Luz de erro na placa-mãe,Erro de paridade ECC,Rejeitado (Modificação)
+RMA-174,2026-03-09,Crucial Pro,64GB,DDR5,Blue Screen (BSOD),Incompatibilidade de firmware,Aprovado
+RMA-175,2026-03-09,Crucial Basics,8GB,DDR4,Luz de erro na placa-mãe,Falha no barramento de dados,Aprovado
+RMA-176,2026-03-09,Crucial Pro,8GB,DDR4,Performance abaixo do esperado,Pinos de contato oxidados,Aprovado
+RMA-177,2026-03-10,Kingston Fury,64GB,DDR5,Erro no MemTest86,Falha térmica em carga alta,Aprovado
+RMA-178,2026-03-10,Crucial Basics,8GB,DDR5,Luz de erro na placa-mãe,Curto-circuito no PCB,Rejeitado (Modificação)
+RMA-179,2026-03-10,Corsair Dominator,32GB,DDR5,Luz de erro na placa-mãe,Degradação de chip (SPD),Aprovado
+RMA-180,2026-03-11,Crucial Basics,32GB,DDR4,Luz de erro na placa-mãe,Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-181,2026-03-11,ADATA XPG,8GB,DDR4,Reinicialização súbita,Falha térmica em carga alta,Aprovado (Limpeza)
+RMA-182,2026-03-11,Corsair Vengeance,32GB,DDR5,Erro no MemTest86,Capacitor SMD ausente,Aprovado
+RMA-183,2026-03-11,Crucial Pro,64GB,DDR4,Sistema não liga,Falha no endereçamento de bits,Rejeitado (Dano Físico)
+RMA-184,2026-03-12,ADATA XPG,16GB,DDR4,Frequência instável,Capacitor SMD ausente,Aprovado
+RMA-185,2026-03-12,Crucial Pro,16GB,DDR5,Frequência instável,Erro de paridade ECC,Aprovado
+RMA-186,2026-03-12,Kingston Fury,16GB,DDR5,Erro no MemTest86,Pinos de contato oxidados,Aprovado
+RMA-187,2026-03-12,Kingston Fury,16GB,DDR5,Luz de erro na placa-mãe,Falha no barramento de dados,Rejeitado (Dano Físico)
+RMA-188,2026-03-13,Corsair Vengeance,16GB,DDR4,Reinicialização súbita,Capacitor SMD ausente,Aprovado
+RMA-189,2026-03-13,G.Skill Trident Z,8GB,DDR4,Congelamento aleatório,Erro de paridade ECC,Rejeitado (Modificação)
+RMA-190,2026-03-14,Corsair Vengeance,32GB,DDR4,Sistema não liga,Capacitor SMD ausente,Aprovado
+RMA-191,2026-03-14,Corsair Vengeance,64GB,DDR4,Performance abaixo do esperado,Incompatibilidade de firmware,Aprovado
+RMA-192,2026-03-14,Corsair Vengeance,16GB,DDR4,Erro no MemTest86,Perfil XMP corrompido,Aprovado
+RMA-193,2026-03-14,Corsair Dominator,8GB,DDR4,Artefatos no vídeo (iGPU),Incompatibilidade de firmware,Aprovado
+RMA-194,2026-03-14,Kingston Fury,64GB,DDR5,Frequência instável,Perfil XMP corrompido,Aprovado (Limpeza)
+RMA-195,2026-03-14,TeamGroup T-Force,8GB,DDR5,Performance abaixo do esperado,Incompatibilidade de firmware,Rejeitado (Modificação)
+RMA-196,2026-03-14,Kingston Fury,16GB,DDR4,Frequência instável,Incompatibilidade de firmware,Aprovado
+RMA-197,2026-03-15,TeamGroup T-Force,8GB,DDR5,Não reconhece dual channel,Pinos de contato oxidados,Aprovado
+RMA-198,2026-03-15,Crucial Basics,16GB,DDR4,Luz de erro na placa-mãe,Falha no barramento de dados,Aprovado
+RMA-199,2026-03-15,G.Skill Trident Z,16GB,DDR4,Luz de erro na placa-mãe,Incompatibilidade de firmware,Aprovado
+RMA-200,2026-03-16,TeamGroup T-Force,32GB,DDR4,Congelamento aleatório,Perfil XMP corrompido,Aprovado
+RMA-201,2026-03-16,G.Skill Trident Z,32GB,DDR4,Erro no MemTest86,Erro de paridade ECC,Rejeitado (Dano Físico)
+RMA-202,2026-03-16,Corsair Vengeance,16GB,DDR5,Reinicialização súbita,Capacitor SMD ausente,Aprovado
+RMA-203,2026-03-16,ADATA XPG,16GB,DDR5,Congelamento aleatório,Curto-circuito no PCB,Aprovado
+RMA-204,2026-03-16,ADATA XPG,8GB,DDR5,Performance abaixo do esperado,Falha no endereçamento de bits,Aprovado
+RMA-205,2026-03-16,Corsair Dominator,32GB,DDR5,Reinicialização súbita,Incompatibilidade de firmware,Aprovado
+RMA-206,2026-03-16,ADATA XPG,8GB,DDR5,Blue Screen (BSOD),Falha no barramento de dados,Aprovado
+RMA-207,2026-03-17,Corsair Dominator,64GB,DDR4,Luz de erro na placa-mãe,Incompatibilidade de firmware,Aprovado
+RMA-208,2026-03-17,TeamGroup T-Force,16GB,DDR4,Reinicialização súbita,Erro de paridade ECC,Aprovado
+RMA-209,2026-03-18,Corsair Dominator,8GB,DDR5,Erro no MemTest86,Falha no barramento de dados,Aprovado (Limpeza)
+RMA-210,2026-03-18,Kingston Fury,32GB,DDR4,Frequência instável,Degradação de chip (SPD),Rejeitado (Dano Físico)
+RMA-211,2026-03-18,G.Skill Trident Z,32GB,DDR5,Artefatos no vídeo (iGPU),Falha no endereçamento de bits,Rejeitado (Dano Físico)
+RMA-212,2026-03-19,Kingston Fury,32GB,DDR4,Blue Screen (BSOD),Degradação de chip (SPD),Rejeitado (Modificação)
+RMA-213,2026-03-19,Crucial Basics,64GB,DDR5,Não reconhece dual channel,Curto-circuito no PCB,Aprovado
+RMA-214,2026-03-20,Corsair Vengeance,8GB,DDR4,Sistema não liga,Falha no endereçamento de bits,Aprovado
+RMA-215,2026-03-20,Corsair Dominator,16GB,DDR4,Frequência instável,Capacitor SMD ausente,Aprovado (Limpeza)
+RMA-216,2026-03-20,Crucial Basics,16GB,DDR5,Não reconhece dual channel,Curto-circuito no PCB,Aprovado
+RMA-217,2026-03-21,Crucial Pro,64GB,DDR4,Congelamento aleatório,Falha no endereçamento de bits,Aprovado
+RMA-218,2026-03-21,Patriot Viper,8GB,DDR4,Congelamento aleatório,Falha no endereçamento de bits,Aprovado
+RMA-219,2026-03-21,Kingston Fury,64GB,DDR4,Luz de erro na placa-mãe,Incompatibilidade de firmware,Rejeitado (Modificação)
+RMA-220,2026-03-21,G.Skill Trident Z,8GB,DDR5,Artefatos no vídeo (iGPU),Curto-circuito no PCB,Aprovado (Limpeza)
+RMA-221,2026-03-23,Patriot Viper,32GB,DDR5,Congelamento aleatório,Curto-circuito no PCB,Aprovado
+RMA-222,2026-03-23,TeamGroup T-Force,32GB,DDR4,Frequência instável,Incompatibilidade de firmware,Aprovado (Limpeza)
+RMA-223,2026-03-24,Corsair Dominator,32GB,DDR5,Luz de erro na placa-mãe,Pinos de contato oxidados,Aprovado (Limpeza)
+RMA-224,2026-03-24,Crucial Basics,16GB,DDR4,Artefatos no vídeo (iGPU),Perfil XMP corrompido,Rejeitado (Modificação)
+RMA-225,2026-03-25,Patriot Viper,32GB,DDR4,Congelamento aleatório,Degradação de chip (SPD),Aprovado
+RMA-226,2026-03-25,Crucial Basics,64GB,DDR4,Congelamento aleatório,Falha no endereçamento de bits,Aprovado
+RMA-227,2026-03-25,TeamGroup T-Force,32GB,DDR4,Reinicialização súbita,Pinos de contato oxidados,Aprovado
+RMA-228,2026-03-25,ADATA XPG,64GB,DDR4,Performance abaixo do esperado,Falha no barramento de dados,Aprovado
+RMA-229,2026-03-25,ADATA XPG,64GB,DDR4,Luz de erro na placa-mãe,Perfil XMP corrompido,Aprovado (Limpeza)
+RMA-230,2026-03-25,G.Skill Trident Z,8GB,DDR4,Artefatos no vídeo (iGPU),Falha no endereçamento de bits,Aprovado (Limpeza)
+RMA-231,2026-03-26,ADATA XPG,8GB,DDR4,Sistema não liga,Incompatibilidade de firmware,Aprovado
+RMA-232,2026-03-28,Crucial Basics,16GB,DDR4,Luz de erro na placa-mãe,Erro de paridade ECC,Aprovado (Limpeza)
+RMA-233,2026-03-29,Kingston Fury,16GB,DDR5,Erro no MemTest86,Perfil XMP corrompido,Aprovado
+RMA-234,2026-03-29,Patriot Viper,64GB,DDR4,Frequência instável,Incompatibilidade de firmware,Aprovado
+RMA-235,2026-03-29,G.Skill Trident Z,64GB,DDR4,Luz de erro na placa-mãe,Incompatibilidade de firmware,Rejeitado (Dano Físico)
+RMA-236,2026-03-30,Corsair Dominator,8GB,DDR4,Frequência instável,Degradação de chip (SPD),Aprovado (Limpeza)
+RMA-237,2026-03-30,Kingston Fury,8GB,DDR5,Erro no MemTest86,Degradação de chip (SPD),Aprovado
+RMA-238,2026-03-31,TeamGroup T-Force,32GB,DDR4,Sistema não liga,Erro de paridade ECC,Rejeitado (Dano Físico)
+RMA-239,2026-03-31,Crucial Basics,8GB,DDR5,Sistema não liga,Falha térmica em carga alta,Aprovado
+RMA-240,2026-03-31,Kingston Fury,32GB,DDR4,Blue Screen (BSOD),Degradação de chip (SPD),Aprovado
+RMA-241,2026-04-01,Crucial Basics,64GB,DDR4,Sistema não liga,Pinos de contato oxidados,Aprovado
+RMA-242,2026-04-01,Crucial Pro,32GB,DDR4,Blue Screen (BSOD),Curto-circuito no PCB,Aprovado
+RMA-243,2026-04-01,Crucial Pro,64GB,DDR5,Frequência instável,Incompatibilidade de firmware,Aprovado
+RMA-244,2026-04-01,Corsair Vengeance,8GB,DDR5,Frequência instável,Falha no barramento de dados,Aprovado
+RMA-245,2026-04-02,Crucial Pro,16GB,DDR5,Performance abaixo do esperado,Erro de paridade ECC,Rejeitado (Dano Físico)
+RMA-246,2026-04-02,Corsair Vengeance,64GB,DDR4,Não reconhece dual channel,Falha no barramento de dados,Aprovado
+RMA-247,2026-04-02,Corsair Vengeance,8GB,DDR4,Sistema não liga,Falha no barramento de dados,Aprovado
+RMA-248,2026-04-02,Corsair Dominator,16GB,DDR4,Performance abaixo do esperado,Incompatibilidade de firmware,Aprovado
+RMA-249,2026-04-02,Corsair Dominator,64GB,DDR5,Blue Screen (BSOD),Pinos de contato oxidados,Aprovado (Limpeza)
+RMA-250,2026-04-03,Corsair Dominator,64GB,DDR4,Sistema não liga,Falha no endereçamento de bits,Rejeitado (Modificação)
+RMA-251,2026-04-04,Kingston Fury,8GB,DDR5,Reinicialização súbita,Degradação de chip (SPD),Aprovado
+RMA-252,2026-04-04,TeamGroup T-Force,32GB,DDR5,Frequência instável,Perfil XMP corrompido,Aprovado
+RMA-253,2026-04-04,Kingston Fury,64GB,DDR4,Sistema não liga,Incompatibilidade de firmware,Aprovado (Limpeza)
+RMA-254,2026-04-04,TeamGroup T-Force,64GB,DDR5,Não reconhece dual channel,Degradação de chip (SPD),Aprovado
+RMA-255,2026-04-04,Crucial Basics,64GB,DDR5,Não reconhece dual channel,Pinos de contato oxidados,Aprovado
+RMA-256,2026-04-05,Corsair Vengeance,8GB,DDR5,Erro no MemTest86,Falha no barramento de dados,Aprovado
+RMA-257,2026-04-06,Crucial Pro,64GB,DDR5,Erro no MemTest86,Capacitor SMD ausente,Aprovado
+RMA-258,2026-04-06,G.Skill Trident Z,32GB,DDR4,Luz de erro na placa-mãe,Capacitor SMD ausente,Aprovado
+RMA-259,2026-04-07,Kingston Fury,16GB,DDR4,Frequência instável,Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-260,2026-04-07,Crucial Pro,32GB,DDR4,Sistema não liga,Falha térmica em carga alta,Aprovado (Limpeza)
+RMA-261,2026-04-07,Patriot Viper,16GB,DDR4,Performance abaixo do esperado,Incompatibilidade de firmware,Aprovado (Limpeza)
+RMA-262,2026-04-07,Crucial Basics,8GB,DDR5,Sistema não liga,Falha térmica em carga alta,Aprovado (Limpeza)
+RMA-263,2026-04-07,Kingston Fury,16GB,DDR4,Reinicialização súbita,Incompatibilidade de firmware,Aprovado
+RMA-264,2026-04-07,TeamGroup T-Force,64GB,DDR5,Frequência instável,Capacitor SMD ausente,Aprovado
+RMA-265,2026-04-09,Corsair Vengeance,8GB,DDR5,Performance abaixo do esperado,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-266,2026-04-09,Kingston Fury,16GB,DDR4,Não reconhece dual channel,Capacitor SMD ausente,Aprovado (Limpeza)
+RMA-267,2026-04-09,Patriot Viper,64GB,DDR5,Blue Screen (BSOD),Pinos de contato oxidados,Aprovado
+RMA-268,2026-04-09,Crucial Pro,8GB,DDR4,Congelamento aleatório,Falha térmica em carga alta,Aprovado
+RMA-269,2026-04-11,ADATA XPG,32GB,DDR4,Sistema não liga,Perfil XMP corrompido,Aprovado
+RMA-270,2026-04-11,G.Skill Trident Z,64GB,DDR4,Luz de erro na placa-mãe,Falha no barramento de dados,Aprovado
+RMA-271,2026-04-12,Patriot Viper,16GB,DDR4,Reinicialização súbita,Curto-circuito no PCB,Aprovado
+RMA-272,2026-04-12,ADATA XPG,8GB,DDR4,Não reconhece dual channel,Incompatibilidade de firmware,Aprovado
+RMA-273,2026-04-13,Kingston Fury,32GB,DDR4,Luz de erro na placa-mãe,Curto-circuito no PCB,Aprovado
+RMA-274,2026-04-13,Corsair Dominator,8GB,DDR4,Não reconhece dual channel,Falha no barramento de dados,Aprovado
+RMA-275,2026-04-13,TeamGroup T-Force,32GB,DDR5,Congelamento aleatório,Incompatibilidade de firmware,Aprovado
+RMA-276,2026-04-13,ADATA XPG,32GB,DDR4,Erro no MemTest86,Perfil XMP corrompido,Aprovado
+RMA-277,2026-04-14,Corsair Vengeance,8GB,DDR4,Congelamento aleatório,Falha térmica em carga alta,Aprovado
+RMA-278,2026-04-14,G.Skill Trident Z,64GB,DDR5,Luz de erro na placa-mãe,Incompatibilidade de firmware,Aprovado
+RMA-279,2026-04-14,Crucial Basics,8GB,DDR4,Congelamento aleatório,Capacitor SMD ausente,Aprovado
+RMA-280,2026-04-14,Kingston Fury,32GB,DDR4,Reinicialização súbita,Capacitor SMD ausente,Aprovado
+RMA-281,2026-04-14,TeamGroup T-Force,8GB,DDR4,Luz de erro na placa-mãe,Erro de paridade ECC,Aprovado (Limpeza)
+RMA-282,2026-04-15,Kingston Fury,64GB,DDR4,Luz de erro na placa-mãe,Erro de paridade ECC,Aprovado
+RMA-283,2026-04-15,Corsair Vengeance,16GB,DDR4,Erro no MemTest86,Degradação de chip (SPD),Rejeitado (Dano Físico)
+RMA-284,2026-04-16,TeamGroup T-Force,32GB,DDR5,Artefatos no vídeo (iGPU),Degradação de chip (SPD),Rejeitado (Dano Físico)
+RMA-285,2026-04-16,ADATA XPG,32GB,DDR5,Artefatos no vídeo (iGPU),Incompatibilidade de firmware,Aprovado
+RMA-286,2026-04-16,G.Skill Trident Z,64GB,DDR5,Frequência instável,Falha no barramento de dados,Aprovado
+RMA-287,2026-04-17,TeamGroup T-Force,8GB,DDR5,Blue Screen (BSOD),Falha no endereçamento de bits,Aprovado
+RMA-288,2026-04-17,ADATA XPG,16GB,DDR5,Congelamento aleatório,Perfil XMP corrompido,Aprovado
+RMA-289,2026-04-18,Corsair Dominator,8GB,DDR5,Erro no MemTest86,Erro de paridade ECC,Aprovado
+RMA-290,2026-04-18,ADATA XPG,64GB,DDR4,Erro no MemTest86,Perfil XMP corrompido,Aprovado
+RMA-291,2026-04-18,G.Skill Trident Z,32GB,DDR5,Sistema não liga,Capacitor SMD ausente,Aprovado
+RMA-292,2026-04-18,Corsair Vengeance,32GB,DDR4,Erro no MemTest86,Perfil XMP corrompido,Aprovado
+RMA-293,2026-04-19,Patriot Viper,64GB,DDR4,Reinicialização súbita,Pinos de contato oxidados,Rejeitado (Dano Físico)
+RMA-294,2026-04-20,Kingston Fury,64GB,DDR5,Frequência instável,Erro de paridade ECC,Aprovado
+RMA-295,2026-04-20,Kingston Fury,64GB,DDR4,Frequência instável,Degradação de chip (SPD),Aprovado
+RMA-296,2026-04-20,Crucial Basics,16GB,DDR4,Erro no MemTest86,Pinos de contato oxidados,Aprovado
+RMA-297,2026-04-20,Corsair Dominator,64GB,DDR5,Congelamento aleatório,Degradação de chip (SPD),Aprovado
+RMA-298,2026-04-20,Crucial Pro,64GB,DDR4,Congelamento aleatório,Capacitor SMD ausente,Aprovado
+RMA-299,2026-04-21,Corsair Vengeance,8GB,DDR4,Luz de erro na placa-mãe,Capacitor SMD ausente,Aprovado
+RMA-300,2026-04-21,Kingston Fury,8GB,DDR5,Erro no MemTest86,Perfil XMP corrompido,Aprovado
+RMA-301,2026-04-22,Corsair Vengeance,8GB,DDR5,Blue Screen (BSOD),Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-302,2026-04-22,TeamGroup T-Force,16GB,DDR5,Blue Screen (BSOD),Curto-circuito no PCB,Aprovado
+RMA-303,2026-04-22,Corsair Vengeance,64GB,DDR4,Blue Screen (BSOD),Erro de paridade ECC,Aprovado
+RMA-304,2026-04-23,Crucial Basics,16GB,DDR5,Sistema não liga,Falha no endereçamento de bits,Aprovado
+RMA-305,2026-04-23,Crucial Basics,32GB,DDR4,Congelamento aleatório,Degradação de chip (SPD),Aprovado
+RMA-306,2026-04-23,G.Skill Trident Z,16GB,DDR4,Reinicialização súbita,Degradação de chip (SPD),Aprovado
+RMA-307,2026-04-23,ADATA XPG,64GB,DDR5,Reinicialização súbita,Perfil XMP corrompido,Aprovado
+RMA-308,2026-04-23,Crucial Basics,64GB,DDR4,Sistema não liga,Falha térmica em carga alta,Aprovado
+RMA-309,2026-04-23,Kingston Fury,16GB,DDR4,Reinicialização súbita,Curto-circuito no PCB,Aprovado
+RMA-310,2026-04-24,Crucial Pro,32GB,DDR5,Não reconhece dual channel,Falha no endereçamento de bits,Aprovado
+RMA-311,2026-04-24,Corsair Vengeance,8GB,DDR5,Performance abaixo do esperado,Degradação de chip (SPD),Aprovado
+RMA-312,2026-04-24,Crucial Basics,64GB,DDR5,Blue Screen (BSOD),Perfil XMP corrompido,Aprovado
+RMA-313,2026-04-24,Crucial Pro,16GB,DDR5,Não reconhece dual channel,Pinos de contato oxidados,Aprovado
+RMA-314,2026-04-25,TeamGroup T-Force,64GB,DDR5,Luz de erro na placa-mãe,Pinos de contato oxidados,Aprovado
+RMA-315,2026-04-25,Corsair Dominator,8GB,DDR5,Reinicialização súbita,Capacitor SMD ausente,Aprovado
+RMA-316,2026-04-25,Patriot Viper,32GB,DDR4,Luz de erro na placa-mãe,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-317,2026-04-25,G.Skill Trident Z,64GB,DDR5,Erro no MemTest86,Falha no barramento de dados,Rejeitado (Dano Físico)
+RMA-318,2026-04-27,Crucial Basics,64GB,DDR4,Não reconhece dual channel,Perfil XMP corrompido,Aprovado
+RMA-319,2026-04-27,G.Skill Trident Z,16GB,DDR5,Não reconhece dual channel,Perfil XMP corrompido,Aprovado
+RMA-320,2026-04-27,Corsair Vengeance,8GB,DDR4,Artefatos no vídeo (iGPU),Curto-circuito no PCB,Rejeitado (Dano Físico)
+RMA-321,2026-04-27,Patriot Viper,64GB,DDR5,Não reconhece dual channel,Falha térmica em carga alta,Aprovado
+RMA-322,2026-04-27,Patriot Viper,16GB,DDR4,Reinicialização súbita,Capacitor SMD ausente,Aprovado
+RMA-323,2026-04-28,Kingston Fury,16GB,DDR4,Artefatos no vídeo (iGPU),Falha térmica em carga alta,Aprovado
+RMA-324,2026-04-28,Crucial Pro,64GB,DDR5,Reinicialização súbita,Degradação de chip (SPD),Aprovado (Limpeza)
+RMA-325,2026-04-28,G.Skill Trident Z,64GB,DDR4,Reinicialização súbita,Falha térmica em carga alta,Aprovado
+RMA-326,2026-04-29,Corsair Vengeance,64GB,DDR5,Artefatos no vídeo (iGPU),Falha no endereçamento de bits,Aprovado
+RMA-327,2026-04-29,G.Skill Trident Z,64GB,DDR5,Erro no MemTest86,Falha térmica em carga alta,Rejeitado (Modificação)
+RMA-328,2026-04-29,Crucial Pro,8GB,DDR5,Congelamento aleatório,Perfil XMP corrompido,Aprovado
+RMA-329,2026-04-30,G.Skill Trident Z,64GB,DDR4,Congelamento aleatório,Falha térmica em carga alta,Aprovado
+RMA-330,2026-04-30,G.Skill Trident Z,16GB,DDR4,Performance abaixo do esperado,Pinos de contato oxidados,Rejeitado (Dano Físico)
+RMA-331,2026-04-30,Crucial Pro,64GB,DDR4,Frequência instável,Curto-circuito no PCB,Rejeitado (Dano Físico)
+RMA-332,2026-04-30,Corsair Dominator,32GB,DDR5,Sistema não liga,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-333,2026-05-01,Corsair Vengeance,64GB,DDR5,Sistema não liga,Perfil XMP corrompido,Aprovado
+RMA-334,2026-05-01,TeamGroup T-Force,16GB,DDR4,Frequência instável,Erro de paridade ECC,Rejeitado (Dano Físico)
+RMA-335,2026-05-01,Kingston Fury,8GB,DDR4,Artefatos no vídeo (iGPU),Incompatibilidade de firmware,Aprovado
+RMA-336,2026-05-01,Crucial Pro,32GB,DDR4,Frequência instável,Degradação de chip (SPD),Aprovado
+RMA-337,2026-05-01,Corsair Vengeance,64GB,DDR5,Blue Screen (BSOD),Curto-circuito no PCB,Aprovado
+RMA-338,2026-05-01,Kingston Fury,16GB,DDR4,Reinicialização súbita,Perfil XMP corrompido,Aprovado
+RMA-339,2026-05-01,Kingston Fury,16GB,DDR5,Reinicialização súbita,Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-340,2026-05-01,ADATA XPG,16GB,DDR4,Sistema não liga,Falha no barramento de dados,Aprovado
+RMA-341,2026-05-02,Crucial Basics,8GB,DDR5,Blue Screen (BSOD),Falha térmica em carga alta,Rejeitado (Dano Físico)
+RMA-342,2026-05-02,TeamGroup T-Force,64GB,DDR5,Reinicialização súbita,Pinos de contato oxidados,Aprovado
+RMA-343,2026-05-02,ADATA XPG,8GB,DDR4,Sistema não liga,Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-344,2026-05-02,Corsair Vengeance,8GB,DDR5,Blue Screen (BSOD),Degradação de chip (SPD),Aprovado (Limpeza)
+RMA-345,2026-05-03,G.Skill Trident Z,8GB,DDR5,Congelamento aleatório,Incompatibilidade de firmware,Aprovado
+RMA-346,2026-05-03,Corsair Vengeance,32GB,DDR5,Não reconhece dual channel,Erro de paridade ECC,Aprovado
+RMA-347,2026-05-03,Corsair Dominator,8GB,DDR5,Não reconhece dual channel,Falha no endereçamento de bits,Aprovado
+RMA-348,2026-05-04,Corsair Vengeance,16GB,DDR5,Erro no MemTest86,Falha no endereçamento de bits,Aprovado
+RMA-349,2026-05-04,Kingston Fury,8GB,DDR4,Frequência instável,Falha no endereçamento de bits,Rejeitado (Dano Físico)
+RMA-350,2026-05-04,Patriot Viper,16GB,DDR4,Blue Screen (BSOD),Falha térmica em carga alta,Aprovado
+RMA-351,2026-05-04,Kingston Fury,16GB,DDR4,Sistema não liga,Curto-circuito no PCB,Rejeitado (Dano Físico)
+RMA-352,2026-05-05,Corsair Dominator,64GB,DDR5,Frequência instável,Perfil XMP corrompido,Aprovado
+RMA-353,2026-05-05,Kingston Fury,16GB,DDR4,Reinicialização súbita,Pinos de contato oxidados,Rejeitado (Dano Físico)
+RMA-354,2026-05-05,TeamGroup T-Force,16GB,DDR5,Não reconhece dual channel,Pinos de contato oxidados,Aprovado
+RMA-355,2026-05-06,ADATA XPG,32GB,DDR4,Não reconhece dual channel,Capacitor SMD ausente,Aprovado (Limpeza)
+RMA-356,2026-05-06,TeamGroup T-Force,16GB,DDR5,Reinicialização súbita,Falha no barramento de dados,Rejeitado (Dano Físico)
+RMA-357,2026-05-06,ADATA XPG,64GB,DDR4,Congelamento aleatório,Pinos de contato oxidados,Aprovado
+RMA-358,2026-05-06,Corsair Dominator,8GB,DDR4,Artefatos no vídeo (iGPU),Erro de paridade ECC,Aprovado
+RMA-359,2026-05-07,G.Skill Trident Z,16GB,DDR5,Sistema não liga,Falha no endereçamento de bits,Aprovado
+RMA-360,2026-05-07,Corsair Vengeance,8GB,DDR5,Sistema não liga,Perfil XMP corrompido,Aprovado
+RMA-361,2026-05-07,Corsair Dominator,16GB,DDR4,Não reconhece dual channel,Pinos de contato oxidados,Aprovado
+RMA-362,2026-05-07,G.Skill Trident Z,32GB,DDR5,Artefatos no vídeo (iGPU),Falha no barramento de dados,Aprovado
+RMA-363,2026-05-07,TeamGroup T-Force,8GB,DDR5,Luz de erro na placa-mãe,Degradação de chip (SPD),Rejeitado (Dano Físico)
+RMA-364,2026-05-08,Crucial Pro,32GB,DDR4,Blue Screen (BSOD),Incompatibilidade de firmware,Rejeitado (Dano Físico)
+RMA-365,2026-05-08,Corsair Dominator,16GB,DDR5,Luz de erro na placa-mãe,Perfil XMP corrompido,Aprovado
+RMA-366,2026-05-09,Corsair Vengeance,8GB,DDR4,Blue Screen (BSOD),Erro de paridade ECC,Rejeitado (Dano Físico)
+RMA-367,2026-05-10,Corsair Dominator,32GB,DDR4,Erro no MemTest86,Falha térmica em carga alta,Aprovado
+RMA-368,2026-05-10,TeamGroup T-Force,32GB,DDR5,Frequência instável,Falha térmica em carga alta,Aprovado
+RMA-369,2026-05-10,Patriot Viper,64GB,DDR5,Congelamento aleatório,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-370,2026-05-11,Corsair Vengeance,64GB,DDR5,Congelamento aleatório,Erro de paridade ECC,Aprovado
+RMA-371,2026-05-11,Patriot Viper,16GB,DDR4,Sistema não liga,Pinos de contato oxidados,Aprovado
+RMA-372,2026-05-12,Corsair Vengeance,64GB,DDR4,Não reconhece dual channel,Incompatibilidade de firmware,Aprovado
+RMA-373,2026-05-13,Corsair Dominator,16GB,DDR5,Artefatos no vídeo (iGPU),Perfil XMP corrompido,Aprovado
+RMA-374,2026-05-13,ADATA XPG,32GB,DDR4,Não reconhece dual channel,Erro de paridade ECC,Aprovado
+RMA-375,2026-05-14,Patriot Viper,8GB,DDR4,Frequência instável,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-376,2026-05-14,ADATA XPG,64GB,DDR4,Não reconhece dual channel,Capacitor SMD ausente,Aprovado (Limpeza)
+RMA-377,2026-05-14,ADATA XPG,32GB,DDR5,Blue Screen (BSOD),Degradação de chip (SPD),Aprovado
+RMA-378,2026-05-15,Kingston Fury,16GB,DDR5,Performance abaixo do esperado,Curto-circuito no PCB,Aprovado
+RMA-379,2026-05-16,Crucial Pro,8GB,DDR5,Erro no MemTest86,Pinos de contato oxidados,Aprovado (Limpeza)
+RMA-380,2026-05-16,Corsair Vengeance,8GB,DDR4,Luz de erro na placa-mãe,Erro de paridade ECC,Aprovado
+RMA-381,2026-05-16,Crucial Pro,8GB,DDR4,Congelamento aleatório,Incompatibilidade de firmware,Aprovado
+RMA-382,2026-05-16,Corsair Dominator,8GB,DDR4,Blue Screen (BSOD),Curto-circuito no PCB,Rejeitado (Dano Físico)
+RMA-383,2026-05-17,Crucial Basics,32GB,DDR4,Reinicialização súbita,Perfil XMP corrompido,Aprovado
+RMA-384,2026-05-17,Crucial Pro,16GB,DDR5,Sistema não liga,Falha térmica em carga alta,Aprovado
+RMA-385,2026-05-17,Corsair Dominator,32GB,DDR4,Congelamento aleatório,Perfil XMP corrompido,Aprovado (Limpeza)
+RMA-386,2026-05-18,Corsair Dominator,32GB,DDR4,Sistema não liga,Pinos de contato oxidados,Aprovado
+RMA-387,2026-05-18,Crucial Basics,16GB,DDR4,Congelamento aleatório,Perfil XMP corrompido,Aprovado
+RMA-388,2026-05-18,Crucial Basics,64GB,DDR4,Erro no MemTest86,Pinos de contato oxidados,Aprovado (Limpeza)
+RMA-389,2026-05-19,Corsair Dominator,32GB,DDR5,Artefatos no vídeo (iGPU),Capacitor SMD ausente,Aprovado (Limpeza)
+RMA-390,2026-05-19,Crucial Basics,16GB,DDR4,Erro no MemTest86,Falha térmica em carga alta,Aprovado
+RMA-391,2026-05-19,Crucial Pro,64GB,DDR4,Sistema não liga,Perfil XMP corrompido,Aprovado
+RMA-392,2026-05-20,Crucial Basics,32GB,DDR4,Sistema não liga,Capacitor SMD ausente,Aprovado
+RMA-393,2026-05-22,TeamGroup T-Force,8GB,DDR4,Frequência instável,Degradação de chip (SPD),Aprovado (Limpeza)
+RMA-394,2026-05-22,Corsair Vengeance,8GB,DDR4,Blue Screen (BSOD),Curto-circuito no PCB,Aprovado
+RMA-395,2026-05-23,Corsair Dominator,8GB,DDR5,Frequência instável,Erro de paridade ECC,Rejeitado (Modificação)
+RMA-396,2026-05-23,Patriot Viper,64GB,DDR5,Congelamento aleatório,Falha no barramento de dados,Aprovado
+RMA-397,2026-05-23,Patriot Viper,64GB,DDR5,Luz de erro na placa-mãe,Degradação de chip (SPD),Aprovado
+RMA-398,2026-05-24,Crucial Basics,64GB,DDR4,Luz de erro na placa-mãe,Degradação de chip (SPD),Aprovado
+RMA-399,2026-05-24,Patriot Viper,16GB,DDR5,Frequência instável,Pinos de contato oxidados,Aprovado
+RMA-400,2026-05-25,Crucial Pro,32GB,DDR4,Não reconhece dual channel,Erro de paridade ECC,Aprovado
+RMA-401,2026-05-25,Crucial Basics,64GB,DDR4,Performance abaixo do esperado,Falha no barramento de dados,Aprovado
+RMA-402,2026-05-25,G.Skill Trident Z,64GB,DDR4,Frequência instável,Falha no barramento de dados,Aprovado
+RMA-403,2026-05-26,Kingston Fury,16GB,DDR5,Frequência instável,Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-404,2026-05-26,Kingston Fury,32GB,DDR4,Erro no MemTest86,Incompatibilidade de firmware,Aprovado
+RMA-405,2026-05-27,Patriot Viper,8GB,DDR5,Reinicialização súbita,Pinos de contato oxidados,Rejeitado (Dano Físico)
+RMA-406,2026-05-27,ADATA XPG,32GB,DDR5,Erro no MemTest86,Degradação de chip (SPD),Aprovado
+RMA-407,2026-05-28,Crucial Basics,8GB,DDR4,Sistema não liga,Falha no endereçamento de bits,Aprovado (Limpeza)
+RMA-408,2026-05-28,Patriot Viper,16GB,DDR4,Artefatos no vídeo (iGPU),Curto-circuito no PCB,Aprovado
+RMA-409,2026-05-29,Kingston Fury,16GB,DDR5,Frequência instável,Falha no barramento de dados,Aprovado
+RMA-410,2026-05-29,G.Skill Trident Z,32GB,DDR5,Não reconhece dual channel,Curto-circuito no PCB,Aprovado
+RMA-411,2026-05-29,TeamGroup T-Force,64GB,DDR5,Reinicialização súbita,Curto-circuito no PCB,Aprovado
+RMA-412,2026-05-29,TeamGroup T-Force,64GB,DDR5,Não reconhece dual channel,Incompatibilidade de firmware,Rejeitado (Modificação)
+RMA-413,2026-05-29,ADATA XPG,32GB,DDR5,Reinicialização súbita,Incompatibilidade de firmware,Aprovado
+RMA-414,2026-05-30,TeamGroup T-Force,8GB,DDR4,Reinicialização súbita,Erro de paridade ECC,Aprovado
+RMA-415,2026-05-31,Corsair Vengeance,32GB,DDR4,Sistema não liga,Erro de paridade ECC,Aprovado
+RMA-416,2026-05-31,ADATA XPG,32GB,DDR5,Não reconhece dual channel,Falha no endereçamento de bits,Aprovado
+RMA-417,2026-05-31,Corsair Vengeance,32GB,DDR4,Artefatos no vídeo (iGPU),Falha térmica em carga alta,Aprovado
+RMA-418,2026-06-01,ADATA XPG,64GB,DDR4,Erro no MemTest86,Erro de paridade ECC,Rejeitado (Dano Físico)
+RMA-419,2026-06-01,Kingston Fury,64GB,DDR4,Erro no MemTest86,Falha no endereçamento de bits,Aprovado
+RMA-420,2026-06-02,G.Skill Trident Z,64GB,DDR5,Erro no MemTest86,Capacitor SMD ausente,Aprovado
+RMA-421,2026-06-02,ADATA XPG,8GB,DDR5,Blue Screen (BSOD),Falha térmica em carga alta,Aprovado
+RMA-422,2026-06-02,ADATA XPG,8GB,DDR4,Reinicialização súbita,Incompatibilidade de firmware,Aprovado
+RMA-423,2026-06-02,Crucial Pro,64GB,DDR5,Erro no MemTest86,Falha no endereçamento de bits,Rejeitado (Dano Físico)
+RMA-424,2026-06-02,Crucial Basics,16GB,DDR5,Reinicialização súbita,Capacitor SMD ausente,Aprovado
+RMA-425,2026-06-02,Patriot Viper,64GB,DDR4,Frequência instável,Perfil XMP corrompido,Aprovado
+RMA-426,2026-06-03,Corsair Dominator,8GB,DDR5,Frequência instável,Pinos de contato oxidados,Aprovado
+RMA-427,2026-06-03,ADATA XPG,32GB,DDR5,Artefatos no vídeo (iGPU),Falha no endereçamento de bits,Aprovado
+RMA-428,2026-06-03,TeamGroup T-Force,32GB,DDR5,Artefatos no vídeo (iGPU),Degradação de chip (SPD),Aprovado
+RMA-429,2026-06-04,G.Skill Trident Z,64GB,DDR5,Não reconhece dual channel,Falha térmica em carga alta,Aprovado
+RMA-430,2026-06-05,Crucial Basics,64GB,DDR4,Erro no MemTest86,Falha no endereçamento de bits,Aprovado (Limpeza)
+RMA-431,2026-06-05,Crucial Pro,64GB,DDR5,Blue Screen (BSOD),Capacitor SMD ausente,Rejeitado (Dano Físico)
+RMA-432,2026-06-05,Corsair Dominator,64GB,DDR4,Sistema não liga,Erro de paridade ECC,Rejeitado (Modificação)
+RMA-433,2026-06-06,Crucial Basics,32GB,DDR5,Não reconhece dual channel,Perfil XMP corrompido,Rejeitado (Dano Físico)
+RMA-434,2026-06-06,Crucial Pro,8GB,DDR5,Reinicialização súbita,Falha térmica em carga alta,Aprovado
+RMA-435,2026-06-06,Crucial Pro,16GB,DDR5,Erro no MemTest86,Curto-circuito no PCB,Aprovado
+RMA-436,2026-06-06,Crucial Basics,16GB,DDR4,Erro no MemTest86,Falha térmica em carga alta,Aprovado
+RMA-437,2026-06-07,Kingston Fury,32GB,DDR4,Frequência instável,Pinos de contato oxidados,Aprovado
+RMA-438,2026-06-07,Corsair Dominator,32GB,DDR4,Frequência instável,Incompatibilidade de firmware,Aprovado
+RMA-439,2026-06-07,ADATA XPG,16GB,DDR4,Erro no MemTest86,Curto-circuito no PCB,Aprovado
+RMA-440,2026-06-07,Patriot Viper,16GB,DDR4,Não reconhece dual channel,Perfil XMP corrompido,Aprovado (Limpeza)
+RMA-441,2026-06-07,Crucial Basics,32GB,DDR4,Não reconhece dual channel,Perfil XMP corrompido,Aprovado
+RMA-442,2026-06-08,Crucial Pro,16GB,DDR4,Erro no MemTest86,Falha no barramento de dados,Aprovado
+RMA-443,2026-06-08,ADATA XPG,64GB,DDR5,Performance abaixo do esperado,Falha no endereçamento de bits,Rejeitado (Dano Físico)
+RMA-444,2026-06-09,G.Skill Trident Z,64GB,DDR4,Artefatos no vídeo (iGPU),Perfil XMP corrompido,Aprovado
+RMA-445,2026-06-09,Kingston Fury,64GB,DDR5,Artefatos no vídeo (iGPU),Degradação de chip (SPD),Aprovado
+RMA-446,2026-06-09,Crucial Pro,16GB,DDR5,Reinicialização súbita,Pinos de contato oxidados,Aprovado
+RMA-447,2026-06-10,Patriot Viper,8GB,DDR4,Erro no MemTest86,Erro de paridade ECC,Aprovado
+RMA-448,2026-06-10,Patriot Viper,64GB,DDR5,Artefatos no vídeo (iGPU),Erro de paridade ECC,Aprovado
+RMA-449,2026-06-10,Corsair Dominator,64GB,DDR5,Não reconhece dual channel,Erro de paridade ECC,Rejeitado (Modificação)
+RMA-450,2026-06-10,G.Skill Trident Z,16GB,DDR5,Erro no MemTest86,Falha no barramento de dados,Aprovado
+RMA-451,2026-06-11,Patriot Viper,64GB,DDR4,Sistema não liga,Incompatibilidade de firmware,Aprovado
+RMA-452,2026-06-11,ADATA XPG,64GB,DDR4,Congelamento aleatório,Pinos de contato oxidados,Aprovado
+RMA-453,2026-06-12,ADATA XPG,64GB,DDR4,Frequência instável,Perfil XMP corrompido,Aprovado
+RMA-454,2026-06-12,Crucial Pro,8GB,DDR5,Frequência instável,Erro de paridade ECC,Rejeitado (Dano Físico)
+RMA-455,2026-06-12,Crucial Basics,64GB,DDR4,Sistema não liga,Pinos de contato oxidados,Aprovado
+RMA-456,2026-06-12,Patriot Viper,8GB,DDR5,Frequência instável,Falha no barramento de dados,Aprovado
+RMA-457,2026-06-12,Patriot Viper,64GB,DDR5,Sistema não liga,Incompatibilidade de firmware,Rejeitado (Dano Físico)
+RMA-458,2026-06-13,Crucial Basics,32GB,DDR4,Luz de erro na placa-mãe,Erro de paridade ECC,Rejeitado (Modificação)
+RMA-459,2026-06-15,TeamGroup T-Force,32GB,DDR4,Artefatos no vídeo (iGPU),Pinos de contato oxidados,Rejeitado (Dano Físico)
+RMA-460,2026-06-15,Crucial Basics,32GB,DDR5,Artefatos no vídeo (iGPU),Falha térmica em carga alta,Aprovado
+RMA-461,2026-06-15,Corsair Vengeance,64GB,DDR4,Blue Screen (BSOD),Curto-circuito no PCB,Rejeitado (Modificação)
+RMA-462,2026-06-15,Corsair Dominator,8GB,DDR5,Reinicialização súbita,Falha térmica em carga alta,Aprovado
+RMA-463,2026-06-16,ADATA XPG,8GB,DDR4,Reinicialização súbita,Falha térmica em carga alta,Aprovado
+RMA-464,2026-06-16,Patriot Viper,64GB,DDR5,Erro no MemTest86,Erro de paridade ECC,Aprovado
+RMA-465,2026-06-18,Patriot Viper,8GB,DDR4,Reinicialização súbita,Degradação de chip (SPD),Aprovado (Limpeza)
+RMA-466,2026-06-18,Corsair Vengeance,32GB,DDR5,Congelamento aleatório,Pinos de contato oxidados,Aprovado
+RMA-467,2026-06-18,ADATA XPG,8GB,DDR5,Frequência instável,Falha térmica em carga alta,Aprovado
+RMA-468,2026-06-18,ADATA XPG,64GB,DDR4,Performance abaixo do esperado,Curto-circuito no PCB,Aprovado
+RMA-469,2026-06-18,Kingston Fury,16GB,DDR4,Blue Screen (BSOD),Erro de paridade ECC,Aprovado
+RMA-470,2026-06-19,Crucial Pro,8GB,DDR5,Erro no MemTest86,Incompatibilidade de firmware,Aprovado
+RMA-471,2026-06-20,Corsair Vengeance,8GB,DDR4,Blue Screen (BSOD),Falha térmica em carga alta,Aprovado
+RMA-472,2026-06-20,Corsair Vengeance,32GB,DDR4,Sistema não liga,Degradação de chip (SPD),Aprovado
+RMA-473,2026-06-20,G.Skill Trident Z,16GB,DDR5,Reinicialização súbita,Degradação de chip (SPD),Aprovado
+RMA-474,2026-06-20,Corsair Vengeance,16GB,DDR5,Sistema não liga,Pinos de contato oxidados,Aprovado
+RMA-475,2026-06-21,Corsair Vengeance,64GB,DDR5,Não reconhece dual channel,Pinos de contato oxidados,Aprovado
+RMA-476,2026-06-21,Kingston Fury,8GB,DDR4,Blue Screen (BSOD),Falha no barramento de dados,Aprovado
+RMA-477,2026-06-21,Patriot Viper,16GB,DDR5,Performance abaixo do esperado,Incompatibilidade de firmware,Aprovado (Limpeza)
+RMA-478,2026-06-22,Kingston Fury,32GB,DDR5,Sistema não liga,Falha no barramento de dados,Aprovado
+RMA-479,2026-06-23,ADATA XPG,32GB,DDR5,Não reconhece dual channel,Erro de paridade ECC,Aprovado
+RMA-480,2026-06-23,Corsair Vengeance,8GB,DDR5,Congelamento aleatório,Erro de paridade ECC,Aprovado
+RMA-481,2026-06-23,Corsair Vengeance,64GB,DDR4,Erro no MemTest86,Incompatibilidade de firmware,Aprovado
+RMA-482,2026-06-24,ADATA XPG,16GB,DDR4,Erro no MemTest86,Pinos de contato oxidados,Aprovado
+RMA-483,2026-06-24,TeamGroup T-Force,64GB,DDR4,Luz de erro na placa-mãe,Falha térmica em carga alta,Aprovado
+RMA-484,2026-06-25,Crucial Basics,32GB,DDR4,Erro no MemTest86,Capacitor SMD ausente,Aprovado
+RMA-485,2026-06-25,TeamGroup T-Force,8GB,DDR4,Reinicialização súbita,Falha no barramento de dados,Aprovado
+RMA-486,2026-06-25,Crucial Basics,16GB,DDR5,Performance abaixo do esperado,Degradação de chip (SPD),Aprovado
+RMA-487,2026-06-26,Kingston Fury,8GB,DDR4,Frequência instável,Falha no barramento de dados,Aprovado
+RMA-488,2026-06-27,Crucial Pro,64GB,DDR4,Não reconhece dual channel,Falha no barramento de dados,Rejeitado (Dano Físico)
+RMA-489,2026-06-27,Corsair Vengeance,8GB,DDR4,Performance abaixo do esperado,Perfil XMP corrompido,Aprovado
+RMA-490,2026-06-27,Crucial Basics,32GB,DDR5,Blue Screen (BSOD),Falha no barramento de dados,Aprovado
+RMA-491,2026-06-27,Patriot Viper,64GB,DDR4,Luz de erro na placa-mãe,Incompatibilidade de firmware,Aprovado
+RMA-492,2026-06-27,Crucial Pro,32GB,DDR5,Blue Screen (BSOD),Incompatibilidade de firmware,Aprovado
+RMA-493,2026-06-27,G.Skill Trident Z,32GB,DDR4,Luz de erro na placa-mãe,Curto-circuito no PCB,Aprovado (Limpeza)
+RMA-494,2026-06-27,TeamGroup T-Force,8GB,DDR4,Performance abaixo do esperado,Curto-circuito no PCB,Aprovado
+RMA-495,2026-06-28,ADATA XPG,32GB,DDR5,Não reconhece dual channel,Curto-circuito no PCB,Aprovado
+RMA-496,2026-06-28,Corsair Vengeance,64GB,DDR4,Blue Screen (BSOD),Erro de paridade ECC,Rejeitado (Modificação)
+RMA-497,2026-06-29,Crucial Pro,64GB,DDR5,Erro no MemTest86,Erro de paridade ECC,Aprovado
+RMA-498,2026-06-30,Patriot Viper,32GB,DDR4,Luz de erro na placa-mãe,Falha térmica em carga alta,Aprovado
+RMA-499,2026-06-30,Patriot Viper,8GB,DDR5,Artefatos no vídeo (iGPU),Capacitor SMD ausente,Aprovado
+RMA-500,2026-06-30,Patriot Viper,8GB,DDR5,Reinicialização súbita,Falha no barramento de dados,Aprovado
