@@ -1,0 +1,88 @@
+services:
+  ollama:
+    build:
+      context: ./ollama
+      dockerfile: Dockerfile
+    container_name: zilia_ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - zilia_internal
+
+  bd_assistant_api:
+    build:
+      context: ./bd_assistant_api
+      dockerfile: Dockerfile
+    container_name: zilia_bd_assistant
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8001:8001"
+      - "8501:8501"
+    environment:
+      MSSQL_SERVER: ${MSSQL_SERVER}
+      MSSQL_PORT: ${MSSQL_PORT}
+      MSSQL_DATABASE: ${MSSQL_DATABASE}
+      MSSQL_USER: ${MSSQL_USER}
+      MSSQL_PASSWORD: ${MSSQL_PASSWORD}
+      ODBC_DRIVER: ${ODBC_DRIVER}
+      SQL_TIMEOUT: ${SQL_TIMEOUT}
+      OLLAMA_HOST: ${OLLAMA_HOST}
+      OLLAMA_MODEL: ${OLLAMA_MODEL}
+    volumes:
+      - ./bd_assistant_api/data:/app/data
+    depends_on:
+      - ollama
+    networks:
+      - zilia_internal
+
+  doc_assistant_mcp:
+    build:
+      context: ./doc_assistant_mcp
+      dockerfile: Dockerfile
+    container_name: zilia_doc_assistant
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8002:8002"
+      - "8502:8502"
+    environment:
+      OLLAMA_GENERATE_URL: ${OLLAMA_GENERATE_URL}
+    volumes:
+      - ./doc_assistant_mcp/uploads_mcp:/app/uploads_mcp
+      - ./doc_assistant_mcp/vector_store_mcp:/app/vector_store_mcp
+    depends_on:
+      - ollama
+    networks:
+      - zilia_internal
+
+  frontend_main:
+    build:
+      context: ./frontend_main
+      dockerfile: Dockerfile
+    container_name: zilia_frontend_main
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8503:8503"
+    environment:
+      BD_ASSISTANT_URL: ${BD_ASSISTANT_URL}
+      DOC_ASSISTANT_URL: ${DOC_ASSISTANT_URL}
+    depends_on:
+      - bd_assistant_api
+      - doc_assistant_mcp
+    networks:
+      - zilia_internal
+
+networks:
+  zilia_internal:
+    driver: bridge
+
+volumes:
+  ollama_data:
