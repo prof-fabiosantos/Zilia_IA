@@ -10,51 +10,9 @@ from PIL import Image
 import base64
 import streamlit.components.v1 as components
 from streamlit_pdf_viewer import pdf_viewer
+import pandas as pd
 
-# =============================================================================
-# ENGENHARIA REVERSA — VULNERABILIDADES E RISCOS IDENTIFICADOS (main.py)
-# =============================================================================
-#
-# [M1] CRASH NA INICIALIZAÇÃO POR ARQUIVO DE FONTE AUSENTE
-#   - `open("fonts/Orbitron-Medium.ttf", "rb")` na linha de topo: se o arquivo
-#     não existir, a aplicação inteira cai com FileNotFoundError antes de qualquer
-#     widget aparecer ao usuário.
-#   Correção: try/except com fallback para font_base64 = "" (fonte simplesmente
-#   não é aplicada, sem crash).
-#
-# [M2] CRASH NA INICIALIZAÇÃO POR LOGO AUSENTE
-#   - `Image.open('zilia_logo.png')` sem tratamento de erro: se a imagem não
-#     existir, a sidebar inteira não renderiza.
-#   Correção: try/except com fallback para texto.
-#
-# [M3] PARÂMETRO INVÁLIDO `width='stretch'` EM st.image / st.sidebar.image
-#   - O parâmetro `width` de `st.image()` aceita inteiro (pixels), não a string
-#     'stretch'. Em versões recentes do Streamlit isso gera TypeError.
-#   Correção: substituído por `width='stretch'` (API atualizada no Streamlit pós-2025-12-31).
-#
-# [M4] RUN_ASYNC COM LOOP ANINHADO (RuntimeError em Streamlit)
-#   - `loop.run_until_complete()` dentro de um loop já em execução (comum no
-#     Streamlit ≥ 1.18 que usa asyncio internamente) lança:
-#     "This event loop is already running."
-#   Correção: detecta loop ativo e, se houver, executa a coroutine em thread
-#   separada via ThreadPoolExecutor para não bloquear o loop do Streamlit.
-#
-# [M5] resp_msg PODE NÃO SER STRING
-#   - `getattr(response, "data", getattr(response, "output", str(response)))`
-#     pode retornar list/dict se o servidor MCP retornar tipo inesperado.
-#     Subsequente `.strip().lower().startswith(...)` quebraria com AttributeError.
-#   Correção: cast explícito para str após o getattr.
-#
-# [M6] DETECÇÃO DE CACHE COM REPLACE CASE-SENSITIVE
-#   - `resp_msg.replace("(Resposta do cache)\n", "", 1)` falha se o servidor
-#     retornar "(resposta do cache)\n" (lowercase), deixando o prefixo na tela.
-#   Correção: `re.sub` com flag `re.IGNORECASE`.
-#
-# [M7] MENSAGEM DE ERRO DE CONEXÃO SEM INSTRUÇÃO AO USUÁRIO
-#   - `st.error(...)` + `st.stop()` não orientava o usuário sobre como corrigir.
-#   Correção: adicionado `st.info()` com instrução para rodar o servidor.
-#
-# =============================================================================
+
 
 st.set_page_config(
     page_title="Assistente de Suporte Técnico",
@@ -508,8 +466,6 @@ section[data-testid="stSidebar"] small {
 
 
 
-
-
 # -------------------------------------------------------------------
 # MCP
 # -------------------------------------------------------------------
@@ -733,21 +689,23 @@ def extract_types(source_lines: list[str]) -> list[str]:
 
 def _infer_feedback_from_text(free_text: str, rerank_scores: dict, mode: str):
     """
-    [FIX-2 / FIX-C] Infere prefer_sources, avoid_sources, avoid_document_types
-    e must_keywords a partir do texto livre do usuário + rerank_scores.
+    Infere prefer_sources, avoid_sources, avoid_document_types, must_keywords
+    e response_instruction a partir do texto livre do usuário + rerank_scores.
 
-    Correções aplicadas:
-    - Detecta negação no texto e preenche avoid mesmo no modo 'partial'.
-    - Extrai avoid_document_types quando o usuário menciona tipo de documento
-      junto de uma negação (ex.: "não use documentos do tipo Manual").
-    - Busca o nome da fonte por match exato, normalizado e sem extensão.
-    - must_keywords só são extraídas quando NÃO há negação (evita incluir
-      palavras como "Não", "use", "evite" como termos de busca).
+    Três categorias de feedback detectadas:
+    1. EVITAR fonte/tipo: texto contém negação ("não use", "evite", etc.)
+       → preenche avoid_sources / avoid_document_types
+    2. INSTRUÇÃO DE FORMATO: texto descreve COMO responder ("em uma frase",
+       "de forma objetiva", "use tópicos", "seja conciso", etc.)
+       → preenche response_instruction, que é injetada no system_prompt do LLM
+    3. KEYWORDS POSITIVAS: texto sem negação, sem instrução de formato
+       → preenche must_keywords para expandir a query de busca
     """
-    avoid_srcs       = []
-    avoid_doc_types  = []
-    prefer_srcs      = []
-    must_kws         = []
+    avoid_srcs            = []
+    avoid_doc_types       = []
+    prefer_srcs           = []
+    must_kws              = []
+    response_instruction  = ""
 
     text_lower = (free_text or "").lower()
 
@@ -796,6 +754,8 @@ def _infer_feedback_from_text(free_text: str, rerank_scores: dict, mode: str):
             "fluxogramas": "fluxograma",
             "artigo":      "artigo",
             "artigos":     "artigo",
+            "planilha":    "planilha",
+            "planilhas":   "planilha",            
         }
         for word, doc_type in type_keywords.items():
             if word in text_lower and doc_type not in avoid_doc_types:
@@ -803,24 +763,82 @@ def _infer_feedback_from_text(free_text: str, rerank_scores: dict, mode: str):
                 print(f"[feedback] avoid_document_type inferido: '{doc_type}'")
 
     else:
-        # Sem negação: extrai keywords técnicas positivas
+        # Sem negação: extrai keywords técnicas positivas do texto livre do usuário.
+        # [FIX-4] Regex corrigido: \w com re.UNICODE cobre letras acentuadas PT-BR
+        # (ã, õ, á, é, í, ó, ú, â, ê, ô, etc.). O padrão anterior [a-zA-Z0-9_.\-]
+        # rejeitava silenciosamente qualquer palavra com acento, fazendo must_keywords
+        # ficar sempre vazia para feedback em português — a expansão de query no
+        # fallback nunca ativava. Agora palavras como "memória", "módulo", "degradação"
+        # são corretamente capturadas.
         stopwords = {"para", "este", "essa", "esse", "como", "qual", "quais",
                      "onde", "quando", "mais", "menos", "sobre", "entre",
-                     "pela", "pelo", "numa", "neste", "nessa", "isso", "isto"}
+                     "pela", "pelo", "numa", "neste", "nessa", "isso", "isto",
+                     "falta", "faltou", "estava", "deveria", "resposta", "usou"}
         must_kws = [
             w.strip() for w in re.split(r"[\s,;:]+", free_text)
             if len(w.strip()) > 4
-            and re.match(r"^[a-zA-Z0-9_.\-]+$", w.strip())
+            and re.match(r"^[\w.\-]+$", w.strip(), re.UNICODE)  # [FIX-4] UNICODE
             and w.strip().lower() not in stopwords
         ]
 
-    # Sempre reforça fontes com score alto, exceto as que o usuário quer evitar
-    prefer_srcs = [
-        s for s, sc in rerank_scores.items()
-        if sc >= 6.0 and s not in avoid_srcs
+    # Detecta menção POSITIVA de fonte no texto livre:
+    # "use o Manual_do_RMA.pdf", "utilize o csv", "busque no manutencao memorias"
+    # Funciona mesmo sem negação — complementa o ramo has_negation acima.
+    positive_source_keywords = [
+        "use ", "utilize ", "usar ", "utilizar ", "busque ", "buscar ",
+        "prefira ", "preferir ", "consulte ", "consultar ", "do arquivo ",
+        "do documento ", "a partir do ", "com base no ", "com base na ",
+        "vem do ", "vem da ", "deve vir do ", "deve vir da ",
     ]
+    has_positive_source = any(kw in text_lower for kw in positive_source_keywords)
 
-    return prefer_srcs, avoid_srcs, avoid_doc_types, must_kws
+    explicit_prefer_srcs = []
+    if has_positive_source and not has_negation:
+        for src in rerank_scores.keys():
+            src_normalized = src.lower().replace("_", " ").replace("-", " ")
+            src_no_ext     = re.sub(r"[.][a-z]{2,4}$", "", src_normalized).strip()
+            # Tokens individuais: "manutencao memorias" bate em "manutencao_memorias_500.csv"
+            src_tokens     = set(re.split(r"[\s_.\-]+", src_no_ext)) - {""}
+            text_tokens    = set(re.split(r"[\s,;:.]+", text_lower)) - {""}
+            token_overlap  = src_tokens & text_tokens
+            matched = (
+                src.lower()    in text_lower or
+                src_normalized in text_lower or
+                src_no_ext     in text_lower or
+                # Match parcial: pelo menos 2 tokens do nome do arquivo aparecem no texto
+                len(token_overlap) >= min(2, len(src_tokens))
+            )
+            if matched:
+                explicit_prefer_srcs.append(src)
+                print(f"[feedback] prefer_source explícito inferido: '{src}' (tokens={token_overlap})")
+
+    # Combina: fontes explicitamente mencionadas + fontes com score alto
+    prefer_srcs = list({
+        *explicit_prefer_srcs,
+        *[s for s, sc in rerank_scores.items() if sc >= 6.0 and s not in avoid_srcs]
+    })
+
+    # [FIX-INSTRUCAO] Detecta instrução de formato no texto livre.
+    # Ativado quando NÃO há negação (não é sobre evitar fontes) e o texto
+    # contém palavras que descrevem COMO responder (formato, tom, tamanho).
+    # O texto inteiro é armazenado como response_instruction para ser
+    # injetado no system_prompt do LLM em perguntas similares futuras.
+    format_keywords = [
+        "frase", "frases", "objetivo", "objetiva", "objetivamente",
+        "conciso", "concisa", "resumo", "resumida", "resumido",
+        "simples", "direta", "direto", "curto", "curta",
+        "tópicos", "topicos", "lista", "detalhado", "detalhada",
+        "explicar melhor", "mais detalhes", "parágrafo", "paragrafo",
+        "formal", "informal", "técnico", "técnica",
+    ]
+    if (
+        not has_negation
+        and free_text
+        and any(kw in (free_text or "").lower() for kw in format_keywords)
+    ):
+        response_instruction = free_text.strip()
+
+    return prefer_srcs, avoid_srcs, avoid_doc_types, must_kws, response_instruction, explicit_prefer_srcs
 
 # -------------------------------------------------------------------
 # Conecta no servidor MCP (mantendo seu padrão)
@@ -871,6 +889,7 @@ def _session_state_init():
         "rerun_after_feedback":   False,
         "rerank_scores":          {},
         "feedback_mode":          "partial",
+        "confirm_clear_knowledge": False,  # controla o passo de confirmação do botão limpar
         # Sessão ativa
         "session_id":             None,   # UUID da sessão persistida (None = sessão nova não salva)
         "session_name":           "",     # nome exibido na sidebar
@@ -1020,7 +1039,7 @@ try:
 except FileNotFoundError:
     st.sidebar.markdown("<span style='color:white; font-weight:bold;'>🤖 Assistente Técnico</span>", unsafe_allow_html=True)
 
-doc_type_options = ["Relatório","Manual", "Fluxograma", "Artigo", "Outro"]
+doc_type_options = ["Relatório","Manual", "Fluxograma", "Artigo", "Planilha", "Outro"]
 selected_doc_type = st.sidebar.selectbox("Para envio de documentos escolha um dos tipos abaixo:", doc_type_options, index=0)
 
 # CSS agressivo aplicado via st.markdown IMEDIATAMENTE antes do file_uploader
@@ -1125,6 +1144,7 @@ if uploaded_file:
                     else:
                         st.sidebar.success(f"✅ {msg}")
                         indexing_succeeded = True
+                        st.session_state.knowledge_stats = None  # força atualização do painel
 
                 except ConnectionRefusedError:
                     st.sidebar.error(
@@ -1223,14 +1243,23 @@ if selected_view_file and selected_view_file != "—":
             st.error(f"Erro ao abrir imagem: {e}")
     elif ext in [".txt", ".csv"]:
         try:
-            for enc in ("utf-8", "latin-1"):
-                try:
-                    with open(view_path, "r", encoding=enc) as f:
-                        content = f.read()
-                    break
-                except UnicodeDecodeError:
-                    continue
-            st.text_area("Conteúdo do arquivo:", value=content, height=400, disabled=True)
+            if ext == ".csv":
+                for enc in ("utf-8", "latin-1"):
+                    try:
+                        df = pd.read_csv(view_path, encoding=enc)
+                        break
+                    except UnicodeDecodeError:
+                        continue
+                st.dataframe(df, use_container_width=True)
+            else:
+                for enc in ("utf-8", "latin-1"):
+                    try:
+                        with open(view_path, "r", encoding=enc) as f:
+                            content = f.read()
+                        break
+                    except UnicodeDecodeError:
+                        continue
+                st.text_area("Conteúdo do arquivo:", value=content, height=400, disabled=True)
         except Exception as e:
             st.error(f"Erro ao abrir arquivo: {e}")
     elif ext == ".docx":
@@ -1257,6 +1286,7 @@ if selected_view_file and selected_view_file != "—":
                 delete_result = run_async(call_tool_async('delete_document', filename=selected_view_file))
                 msg = getattr(delete_result, "data", getattr(delete_result, "output", str(delete_result)))
                 st.success(f"{msg}")
+                st.session_state.knowledge_stats = None  # força atualização do painel
                 st.rerun()
             except Exception as e:
                 st.error(f"Erro ao excluir documento: {e}")
@@ -1265,6 +1295,173 @@ if selected_view_file and selected_view_file != "—":
 # Inicialização do session_state
 # ==========================
 _session_state_init()
+
+# ==========================
+# Sidebar — Painel de Conhecimento
+# ==========================
+st.sidebar.markdown("---")
+st.sidebar.markdown(
+    "<span style='color:white; font-weight:bold; font-size:1.1em;'>🧠 Conhecimento acumulado</span>",
+    unsafe_allow_html=True
+)
+
+# Carrega stats com cache em session_state para não chamar o servidor a cada rerun
+if "knowledge_stats" not in st.session_state:
+    st.session_state.knowledge_stats = None
+if "knowledge_stats_error" not in st.session_state:
+    st.session_state.knowledge_stats_error = False
+
+# Botão de atualizar + carga automática na primeira vez
+_stats_loaded = st.session_state.knowledge_stats is not None
+_col_stats, _col_refresh = st.sidebar.columns([7, 3])
+
+with _col_refresh:
+    if st.button("🔄", key="btn_refresh_stats", help="Atualizar contadores", use_container_width=True):
+        st.session_state.knowledge_stats = None  # força recarga
+        st.rerun()
+
+if not _stats_loaded:
+    try:
+        _stats_result = run_async(call_tool_async("get_knowledge_stats"))
+        _stats_raw = getattr(_stats_result, "data", getattr(_stats_result, "output", str(_stats_result)))
+        import json as _stats_json
+        st.session_state.knowledge_stats = _stats_json.loads(str(_stats_raw))
+        st.session_state.knowledge_stats_error = False
+    except Exception as _stats_err:
+        st.session_state.knowledge_stats_error = True
+        print(f"⚠️ Erro ao carregar knowledge_stats: {_stats_err}")
+
+_ks = st.session_state.knowledge_stats or {}
+_err = st.session_state.knowledge_stats_error
+
+if _err:
+    st.sidebar.caption("⚠️ Não foi possível carregar os contadores.")
+else:
+    _cache_n    = _ks.get("cache_count", 0)
+    _fb_n       = _ks.get("feedback_count", 0)
+    _docs_n     = _ks.get("docs_count", 0)
+    _chunks_n   = _ks.get("chunks_count", 0)
+
+    # Linha 1: documentos e chunks
+    _c1, _c2 = st.sidebar.columns(2)
+    with _c1:
+        st.sidebar.markdown(
+            f"<div style='background:rgba(255,255,255,0.10); border-radius:8px; padding:8px 10px; margin-bottom:6px;'>"
+            f"<div style='color:rgba(255,255,255,0.65); font-size:0.70em; text-transform:uppercase; letter-spacing:0.5px;'>📄 Documentos</div>"
+            f"<div style='color:#ffffff; font-size:1.4em; font-weight:700; line-height:1.2;'>{_docs_n}</div>"
+            f"</div>",
+            unsafe_allow_html=True
+        )
+    with _c2:
+        st.sidebar.markdown(
+            f"<div style='background:rgba(255,255,255,0.10); border-radius:8px; padding:8px 10px; margin-bottom:6px;'>"
+            f"<div style='color:rgba(255,255,255,0.65); font-size:0.70em; text-transform:uppercase; letter-spacing:0.5px;'>🧩 Trechos indexados</div>"
+            f"<div style='color:#ffffff; font-size:1.4em; font-weight:700; line-height:1.2;'>{_chunks_n:,}</div>"
+            f"</div>",
+            unsafe_allow_html=True
+        )
+
+    # Linha 2: respostas confirmadas e preferências aprendidas
+    _c3, _c4 = st.sidebar.columns(2)
+    with _c3:
+        st.sidebar.markdown(
+            f"<div style='background:rgba(255,255,255,0.10); border-radius:8px; padding:8px 10px; margin-bottom:4px;'>"
+            f"<div style='color:rgba(255,255,255,0.65); font-size:0.70em; text-transform:uppercase; letter-spacing:0.5px;'>✅ Respostas confirmadas</div>"
+            f"<div style='color:#ffffff; font-size:1.4em; font-weight:700; line-height:1.2;'>{_cache_n}</div>"
+            f"</div>",
+            unsafe_allow_html=True
+        )
+    with _c4:
+        st.sidebar.markdown(
+            f"<div style='background:rgba(255,255,255,0.10); border-radius:8px; padding:8px 10px; margin-bottom:4px;'>"
+            f"<div style='color:rgba(255,255,255,0.65); font-size:0.70em; text-transform:uppercase; letter-spacing:0.5px;'>🎯 Preferências aprendidas</div>"
+            f"<div style='color:#ffffff; font-size:1.4em; font-weight:700; line-height:1.2;'>{_fb_n}</div>"
+            f"</div>",
+            unsafe_allow_html=True
+        )
+
+    # ── Botão de limpeza com confirmação em dois passos ──────────────────────
+    if not st.session_state.get("confirm_clear_knowledge", False):
+        # Passo 1: botão inicial — apenas mostra o alerta de confirmação
+        if st.sidebar.button(
+            "🗑️ Limpar conhecimento acumulado",
+            key="btn_clear_knowledge",
+            use_container_width=True,
+            help="Remove respostas confirmadas e preferências aprendidas. Documentos e sessões não são afetados.",
+        ):
+            st.session_state.confirm_clear_knowledge = True
+            st.rerun()
+    else:
+        # Passo 2: confirmação explícita antes de executar
+        st.sidebar.markdown(
+            "<div style='background:rgba(220,50,50,0.25); border:1px solid rgba(255,100,100,0.5); "
+            "border-radius:8px; padding:10px; margin-bottom:8px;'>"
+            "<span style='color:#ffcccc; font-size:0.85em;'>⚠️ Isso apagará todas as respostas "
+            "confirmadas e preferências aprendidas. Documentos e sessões <b>não</b> serão afetados.</span>"
+            "</div>",
+            unsafe_allow_html=True,
+        )
+        _cc1, _cc2 = st.sidebar.columns(2)
+        with _cc1:
+            if st.button("✅ Confirmar", key="btn_clear_confirm", use_container_width=True):
+                _clear_ok = False
+                _clear_msgs = []
+                _clear_err = None
+
+                with st.sidebar:
+                    with st.spinner("Limpando..."):
+                        try:
+                            _clear_result = run_async(call_tool_async(
+                                "clear_learned_knowledge", target="all"
+                            ))
+                            _clear_raw = getattr(_clear_result, "data",
+                                                 getattr(_clear_result, "output", str(_clear_result)))
+                            import json as _cj
+                            _cr = _cj.loads(str(_clear_raw))
+                            _partial_fail = False
+                            if _cr.get("cache", {}).get("ok"):
+                                n = _cr["cache"].get("removidos", 0)
+                                r = _cr["cache"].get("restantes", 0)
+                                _clear_msgs.append(f"{n} resposta(s) confirmada(s)")
+                                if r > 0:
+                                    _partial_fail = True
+                                    _clear_msgs.append(f"⚠️ {r} entrada(s) do cache não foram removidas")
+                            if _cr.get("feedback", {}).get("ok"):
+                                n = _cr["feedback"].get("removidos", 0)
+                                r = _cr["feedback"].get("restantes", 0)
+                                _clear_msgs.append(f"{n} preferência(s) aprendida(s)")
+                                if r > 0:
+                                    _partial_fail = True
+                                    _clear_msgs.append(f"⚠️ {r} entrada(s) do feedback não foram removidas")
+                            _clear_ok = not _partial_fail
+                        except Exception as _ce:
+                            _clear_err = str(_ce)
+
+                # Atualiza session_state FORA do spinner/sidebar, antes do rerun
+                # para garantir persistência antes do próximo ciclo de render
+                st.session_state.confirm_clear_knowledge = False
+                st.session_state.knowledge_stats = None  # força recarga dos contadores
+                st.session_state.knowledge_stats_error = False
+
+                if _clear_ok:
+                    msg = f"🗑️ Removido: {' e '.join(_clear_msgs)}." if _clear_msgs else "Base já estava vazia."
+                    st.session_state["_clear_success_msg"] = msg
+                else:
+                    st.session_state["_clear_success_msg"] = None
+                    st.session_state["_clear_error_msg"] = _clear_err
+
+                st.rerun()
+
+        with _cc2:
+            if st.button("❌ Cancelar", key="btn_clear_cancel", use_container_width=True):
+                st.session_state.confirm_clear_knowledge = False
+                st.rerun()
+
+# Exibe mensagem de resultado da limpeza (após o rerun, fora do bloco de confirmação)
+if st.session_state.get("_clear_success_msg"):
+    st.sidebar.success(st.session_state.pop("_clear_success_msg"))
+elif st.session_state.get("_clear_error_msg"):
+    st.sidebar.error(f"❌ Erro ao limpar: {st.session_state.pop('_clear_error_msg')}")
 
 # ==========================
 # Sidebar — Sessões
@@ -1637,8 +1834,18 @@ if prompt := st.chat_input("Qual a sua dúvida sobre os documentos?"):
             st.session_state.ultima_resposta = resp_msg
             st.session_state.ultima_fontes = extract_sources_from_response(resp_msg)
 
-            # só mostrar se não for resposta "não encontrada"
-            if "não encontrei informação relevante" not in resp_msg.lower():
+            # [FIX-2] Usa prefixo único "não encontrei" que cobre TODAS as variantes
+            # de resposta vazia do servidor (gate pós-reranking, fallback final,
+            # filtro por tipo). Antes só "não encontrei informação relevante" era
+            # verificado, deixando "não encontrei informações suficientes" passar
+            # e permitindo que o usuário cacheasse uma resposta de falha como ✅ Correta.
+            _resp_lower = resp_msg.strip().lower()
+            _is_not_found = (
+                _resp_lower.startswith("não encontrei")
+                or _resp_lower.startswith("nao encontrei")
+                or "❌" in resp_msg[:10]  # erros de sistema (ex.: falha no Ollama)
+            )
+            if not _is_not_found:
                 st.session_state.show_confirm_button = True
             else:
                 st.session_state.show_confirm_button = False
@@ -1659,6 +1866,19 @@ if prompt := st.chat_input("Qual a sua dúvida sobre os documentos?"):
 #
 # O mapeamento para prefer/avoid é inferido automaticamente dos rerank_scores.
 # -----------------------------------------------------------------------------
+
+if (
+    st.session_state.get("ultima_pergunta")
+    and st.session_state.get("ultima_resposta")
+    and st.session_state.get("show_confirm_button", False)
+):
+    # [FIX-5] Dupla verificação: show_confirm_button já é False para respostas
+    # "não encontradas" (Fix 2), mas esta guarda adicional protege contra
+    # qualquer caminho de código que possa ter setado o flag incorretamente.
+    _ultima = st.session_state.ultima_resposta.strip().lower()
+    _bloqueado = _ultima.startswith("não encontrei") or _ultima.startswith("nao encontrei") or "❌" in st.session_state.ultima_resposta[:10]
+    if _bloqueado:
+        st.session_state.show_confirm_button = False  # corrige estado inconsistente
 
 if (
     st.session_state.get("ultima_pergunta")
@@ -1744,9 +1964,9 @@ if (
                 try:
                     rerank_scores = st.session_state.get("rerank_scores", {})
 
-                    # [FIX-2/C] Usa a função centralizada que detecta negações,
-                    # extrai avoid_sources, avoid_document_types e must_keywords.
-                    prefer_srcs, avoid_srcs, avoid_doc_types, must_kws = _infer_feedback_from_text(
+                    # Usa a função centralizada: detecta negações, instruções de
+                    # formato e extrai prefer/avoid/must_keywords/response_instruction.
+                    prefer_srcs, avoid_srcs, avoid_doc_types, must_kws, resp_instruction, explicit_prefer_srcs = _infer_feedback_from_text(
                         free_text=free_text,
                         rerank_scores=rerank_scores,
                         mode=feedback_mode
@@ -1769,12 +1989,15 @@ if (
                         prefer_sources=prefer_srcs,
                         avoid_sources=avoid_srcs,
                         avoid_document_types=avoid_doc_types,
+                        explicit_prefer_sources=explicit_prefer_srcs,
                         must_keywords=must_kws,
+                        response_instruction=resp_instruction,
                         note=note
                     ))
                     st.success("Feedback registrado! O sistema vai usar isso em perguntas similares.")
                     st.session_state.feedback_saved = True
                     st.session_state.show_feedback_expander = False
+                    st.session_state.knowledge_stats = None  # força atualização do painel
                 except Exception as e:
                     st.error(f"❌ Erro ao salvar feedback: {e}")
 
@@ -1855,12 +2078,16 @@ if (
                                                value=st.session_state.get("fb_must_keywords_text", ""),
                                                key="fb_must_keywords_text",
                                                help="Termos/siglas obrigatórias para ampliar a busca.")
+            response_instruction_adv = st.text_area(
+                "Instrução de formato (como o modelo deve responder)",
+                value=st.session_state.get("fb_response_instruction", ""),
+                key="fb_response_instruction",
+                height=70,
+                help="Ex.: 'Responda em uma frase objetiva.' ou 'Use tópicos numerados.' ou 'Seja conciso.'",
+            )
             query_rewrite = st.text_area("Query rewrite (opcional)",
                                          value=st.session_state.get("fb_query_rewrite", ""),
                                          key="fb_query_rewrite", height=70)
-            rule = st.text_input("Regra curta",
-                                 value=st.session_state.get("fb_rule", ""),
-                                 key="fb_rule")
             note = st.text_area("Nota (opcional)", value=st.session_state.get("fb_note", ""),
                                 key="fb_note", height=80)
             submitted_adv = st.form_submit_button("💾 Salvar configuração avançada")
@@ -1869,6 +2096,17 @@ if (
             with st.spinner("Salvando..."):
                 try:
                     must_keywords = [x.strip() for x in (must_keywords_text or "").split(",") if x.strip()]
+
+                    # [FIX-ADV-2] prefer_sources selecionado manualmente no formulário
+                    # avançado é tratado como HARD (explicit_prefer_sources), não soft.
+                    # O usuário que escolhe explicitamente um arquivo no multiselect
+                    # espera que apenas aquele arquivo seja usado — comportamento HARD.
+                    explicit_prefer_adv = list(prefer_sources) if prefer_sources else []
+
+                    # [FIX-ADV-1] Campo 'rule' removido da UI — não tinha parâmetro
+                    # correspondente no servidor e era ignorado silenciosamente.
+                    # O campo 'note' cobre o mesmo caso de uso de forma funcional.
+
                     fb_result = run_async(call_tool_async(
                         "registrar_feedback",
                         pergunta=st.session_state.ultima_pergunta,
@@ -1876,7 +2114,9 @@ if (
                         avoid_document_types=avoid_types,
                         prefer_sources=prefer_sources,
                         avoid_sources=avoid_sources,
+                        explicit_prefer_sources=explicit_prefer_adv,
                         must_keywords=must_keywords,
+                        response_instruction=(response_instruction_adv or "").strip(),
                         query_rewrite=(query_rewrite or "").strip(),
                         note=note
                     ))
@@ -1885,6 +2125,9 @@ if (
                     st.success(fb_msg)
                     st.session_state.feedback_saved = True
                     st.session_state.force_fresh = True
+                    # [FIX-ADV-3] Aciona retry automático igual ao formulário simples
+                    st.session_state.rerun_after_feedback = True
+                    st.session_state.knowledge_stats = None
                 except Exception as e:
                     st.error(f"❌ Erro ao salvar: {e}")
 
@@ -1898,6 +2141,13 @@ if st.session_state.get("rerun_after_feedback", False) and st.session_state.get(
 
     with st.spinner("🔁 Tentando novamente com o novo ensino (ignorando cache)..."):
         try:
+            # [FIX-BUG3] Aguarda o Qdrant processar o upsert do feedback antes
+            # de disparar a retry. O wait=True no upsert garante que a operação
+            # foi confirmada pelo servidor Qdrant, mas há latência de indexação
+            # do vetor em memória. 0.5s é suficiente para o índice HNSW ser atualizado.
+            import time as _time
+            _time.sleep(0.5)
+
             retry_response = run_async(call_tool_async(
                 "ask_question",
                 query=retry_query,

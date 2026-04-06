@@ -1,4 +1,5 @@
 import uuid
+import hashlib
 import os
 import io
 import re
@@ -29,8 +30,9 @@ CACHE_COLLECTION   = "cache_perguntas_mcp"
 FEEDBACK_COLLECTION = "feedback_preferencias_mcp"
 SESSIONS_COLLECTION = "sessoes_mcp"  # [SESSÕES] histórico de conversas persistidas
 
-LLM                    = "granite4:latest"
+LLM                    = "gpt-oss:20b"
 EMBED_MODEL            = "nomic-embed-text:latest"
+OCR_MODEL              = "gemma4:latest"  # modelo OCR multimodal (requer Ollama ≥ 0.9.0)
 VECTOR_SIZE            = 768
 
 # ---------------------------------------------------------------------------
@@ -69,6 +71,11 @@ CACHE_SCORE_THRESHOLD  = 0.92   # [MELHORIA] Reduzido de 0.97 → 0.92 para capt
 RAG_HIGH_THRESHOLD     = 0.5
 RAG_LOW_THRESHOLD      = 0.3
 FEEDBACK_THRESHOLD     = 0.70   # [FIX-B] Reduzido de 0.80 → 0.70 para capturar variações lexicais da pergunta
+
+# [FIX-2] Prefixo unico para TODAS as respostas "nao encontrado" do servidor.
+# Centralizar aqui evita que app.py precise filtrar multiplas strings divergentes.
+# Toda mensagem de "sem resultado" deve comecar com esse prefixo (lowercase).
+NOT_FOUND_PREFIX = "nao encontrei"
 
 # Reranking
 # [MELHORIA] Com cross-encoder, podemos aumentar RERANK_CANDIDATE_LIMIT
@@ -147,7 +154,7 @@ os.makedirs(QDRANT_PATH, exist_ok=True)
 try:
     qdrant_client  = QdrantClient(path=QDRANT_PATH)
     ollama_client  = ollama.Client()
-    ocr            = OCRProcessor(model_name='qwen2.5vl:7b', base_url="http://localhost:11434/api/generate")
+    ocr            = OCRProcessor(model_name=OCR_MODEL, base_url="http://localhost:11434/api/generate")
     print("✅ Clientes Qdrant, Ollama e OCR inicializados com sucesso.")
 except Exception as e:
     # [V2] substituído exit() por raise com mensagem clara
@@ -447,21 +454,60 @@ def get_text_from_txt(file_path: str) -> str:
 
 def get_text_from_csv(file_path: str) -> str:
     """
-    [MELHORIA] Converte CSV em texto estruturado legível pelo LLM.
-    Cada linha vira "campo1: valor1 | campo2: valor2" para preservar semântica.
-    Requer: pip install pandas
+    Converte CSV em texto estruturado com duas seções separadas por marcador especial:
+
+    SEÇÃO 1 — Bloco semântico de resumo (linguagem natural):
+      Gerado a partir dos valores únicos de cada coluna. Garante que perguntas como
+      "Quais são os modelos de memória?" encontrem contexto relevante, porque o
+      chunk de resumo contém "Os modelos registrados incluem: Corsair Dominator,
+      Kingston Fury..." em linguagem natural, obtendo score alto no cross-encoder.
+
+    SEÇÃO 2 — Linhas tabulares (formato original):
+      Mantidas para perguntas específicas ("quais tickets de RMA-001?").
+
+    O separador __CSV_DATA_START__ instrui get_semantic_chunks a não misturar
+    as duas seções no mesmo chunk (via bloco dedicado antes do chunking).
     """
     try:
         import pandas as pd
-        # Tenta detectar separador automaticamente
         df = pd.read_csv(file_path, sep=None, engine="python", dtype=str, encoding="utf-8")
-        rows = []
         headers = list(df.columns)
+        base_name = os.path.basename(file_path)
+
+        # ── Seção 1: resumo semântico em linguagem natural ──────────────────
+        # Cada coluna vira uma frase descritiva com seus valores únicos.
+        # Isso é o que o cross-encoder vai parear com perguntas do usuário.
+        summary_lines = [
+            f"Este documento é o arquivo '{base_name}' com {len(df)} registros.",
+            f"As colunas disponíveis são: {', '.join(headers)}.",
+        ]
+        for col in headers:
+            unique_vals = df[col].dropna().unique()
+            unique_vals = [str(v).strip() for v in unique_vals
+                           if str(v).strip() not in ("", "nan", "None")]
+            if not unique_vals:
+                continue
+            sample = unique_vals[:25]  # até 25 valores únicos por coluna
+            # Frase em linguagem natural para facilitar o matching semântico
+            summary_lines.append(
+                f"Os valores registrados na coluna '{col}' incluem: {', '.join(sample)}."
+            )
+        summary_block = "\n".join(summary_lines)
+
+        # ── Seção 2: linhas tabulares ────────────────────────────────────────
+        rows = []
         for _, row in df.iterrows():
-            pairs = [f"{h}: {str(v).strip()}" for h, v in zip(headers, row) if str(v).strip() not in ("", "nan", "None")]
+            pairs = [
+                f"{h}: {str(v).strip()}"
+                for h, v in zip(headers, row)
+                if str(v).strip() not in ("", "nan", "None")
+            ]
             if pairs:
                 rows.append(" | ".join(pairs))
-        text = "\n".join(rows)
+
+        # Separa as seções com marcador explícito para que o chunking semântico
+        # não fragmenta o bloco de resumo junto com linhas de dados.
+        text = summary_block + "\n\n__CSV_DATA_START__\n\n" + "\n".join(rows)
         print(f"✅ CSV extraído: {len(df)} linhas, {len(headers)} colunas, {len(text)} caracteres.")
         return text if text.strip() else "⚠️ CSV sem conteúdo útil."
     except ImportError:
@@ -547,6 +593,28 @@ def get_semantic_chunks(
     """
     if not text or not text.strip():
         return []
+
+    # [FIX-CSV] Trata o marcador __CSV_DATA_START__ gerado por get_text_from_csv.
+    # O bloco de resumo semântico (antes do marcador) é preservado como um chunk
+    # dedicado e NÃO misturado com as linhas tabulares que vêm depois.
+    # Isso garante que o cross-encoder encontre um chunk em linguagem natural
+    # (ex.: "Os modelos registrados incluem: Corsair Dominator, Kingston Fury...")
+    # que combina com perguntas como "Quais são os modelos de memória?".
+    CSV_MARKER = "__CSV_DATA_START__"
+    if CSV_MARKER in text:
+        parts = text.split(CSV_MARKER, 1)
+        summary_part = parts[0].strip()
+        data_part    = parts[1].strip()
+        result_chunks = []
+        # Chunk dedicado para o resumo semântico (nunca fragmentado)
+        if summary_part:
+            result_chunks.append(summary_part)
+        # Chunking normal para as linhas de dados tabulares
+        if data_part:
+            result_chunks.extend(
+                get_semantic_chunks(data_part, max_tokens, min_tokens, overlap_sents, source_hint)
+            )
+        return result_chunks if result_chunks else [text]
 
     sentences = _split_into_sentences(text)
     if not sentences:
@@ -708,18 +776,34 @@ def _get_cross_encoder():
 
 
 def _rerank_with_cross_encoder(query: str, hits: list, top_k: int, ce) -> list:
-    """Reranking com cross-encoder local (rápido, preciso, offline após download)."""
-    import math
+    """Reranking com cross-encoder local (rápido, preciso, offline após download).
 
+    IMPORTANTE — normalização min-max em vez de sigmoid:
+    O modelo ms-marco-MiniLM-L6-v2 produz logits em escala arbitrária que varia
+    fortemente conforme o idioma e o tipo de conteúdo. Para português e texto
+    tabular (CSV), todos os logits caem na faixa -7 a -12, fazendo sigmoid(x)
+    retornar valores próximos de 0 para TODOS os chunks — incluindo os mais
+    relevantes. Com sigmoid, o melhor rerank_score fica em 0.00 e o gate
+    `MIN_RERANK_SCORE_TO_ANSWER` bloqueia a geração mesmo com documentos válidos.
+
+    A normalização min-max resolve isso: o chunk mais relevante do lote sempre
+    recebe score 10, o menos relevante recebe 0, e os demais são distribuídos
+    proporcionalmente. Isso preserva o RANKING (que é o que importa para selecionar
+    os top-K) e garante que o melhor chunk sempre passa o gate de relevância.
+
+    Quando todos os logits são idênticos (caso de empate total), atribui 5.0 a todos.
+    """
     pairs      = [(query, (hit.payload or {}).get("text", "")[:512]) for hit in hits]
-    raw_scores = ce.predict(pairs)
+    raw_scores = list(ce.predict(pairs))  # lista de floats (logits)
 
-    def _sigmoid(x):
-        return 1.0 / (1.0 + math.exp(-float(x)))
+    # Normalização min-max: mapeia [min_logit, max_logit] → [0, 10]
+    min_raw = min(raw_scores)
+    max_raw = max(raw_scores)
+    rng     = max_raw - min_raw
 
     scored = []
     for i, (raw, hit) in enumerate(zip(raw_scores, hits)):
-        score  = round(_sigmoid(raw) * 10, 2)
+        score  = round((raw - min_raw) / rng * 10, 2) if rng > 1e-6 else 5.0
         source = _hit_source(hit)
         page   = (hit.payload or {}).get("page", "N/A")
         print(f"  Chunk {i+1} [{source} p.{page}]: cross_score={score:.2f} (logit={raw:.3f})")
@@ -1068,48 +1152,124 @@ def confirmar_resposta(pergunta: str, resposta: str) -> str:
 def registrar_feedback(
     pergunta: str,
     prefer_document_types: Optional[List[str]] = None,
-    avoid_document_types:  Optional[List[str]] = None,
-    prefer_sources:        Optional[List[str]] = None,
-    avoid_sources:         Optional[List[str]] = None,
-    must_keywords:         Optional[List[str]] = None,
-    query_rewrite:         str = "",
-    note:                  str = ""
+    avoid_document_types:     Optional[List[str]] = None,
+    prefer_sources:           Optional[List[str]] = None,
+    avoid_sources:            Optional[List[str]] = None,
+    explicit_prefer_sources:  Optional[List[str]] = None,
+    must_keywords:            Optional[List[str]] = None,
+    query_rewrite:            str = "",
+    response_instruction:     str = "",
+    note:                     str = ""
 ) -> str:
     """
     Aprende com feedback do usuário: armazena embedding da pergunta e preferências
     de retrieval (tipos/fontes a preferir ou evitar, keywords obrigatórias, reescrita).
+
+    [FIX-1] ID DETERMINÍSTICO — usa MD5 da pergunta normalizada convertido em UUID.
+    Isso garante que múltiplos feedbacks para a mesma pergunta sempre façam UPDATE
+    no mesmo registro (upsert idempotente), em vez de acumular registros contraditórios
+    com UUIDs aleatórios. Sem isso, ✅ Correta + ❌ Errada para a mesma pergunta criam
+    dois registros opostos, e limit=1 retorna um deles de forma não-determinística.
+
+    Merging de listas: novos prefer/avoid são UNIDOS com os existentes, não substituídos.
+    Isso preserva aprendizado anterior ao mesmo tempo que incorpora o novo sinal.
     """
     try:
         if not pergunta or not pergunta.strip():
             return "Pergunta vazia. Nada foi salvo."
 
-        # [FIX-1] Mesma normalização aplicada no cache e no ask_question,
-        # garantindo que o embedding de feedback seja comparável aos demais.
-        emb = get_embeddings(_normalize_query(pergunta))
+        normalized_pergunta = _normalize_query(pergunta)
+
+        # [FIX-1] ID determinístico: MD5 da pergunta normalizada → UUID v3-like
+        # Mesmo input sempre gera o mesmo ID → upsert atualiza o registro existente
+        feedback_id = str(uuid.UUID(hashlib.md5(normalized_pergunta.encode("utf-8")).hexdigest()))
+
+        emb = get_embeddings(normalized_pergunta)
         if not emb:
             return "Erro: não foi possível gerar embedding para salvar o feedback."
 
+        # Normaliza as listas recebidas
+        new_prefer_types   = [x.strip().lower() for x in (prefer_document_types or []) if x and x.strip()]
+        new_avoid_types    = [x.strip().lower() for x in (avoid_document_types  or []) if x and x.strip()]
+        new_prefer_sources = [x.strip() for x in (prefer_sources or []) if x and x.strip()]
+        new_avoid_sources  = [x.strip() for x in (avoid_sources  or []) if x and x.strip()]
+        new_must_keywords  = [x.strip() for x in (must_keywords  or []) if x and x.strip()]
+
+        # [FIX-1] Merging: lê registro existente e faz UNIÃO das listas,
+        # garantindo que feedback anterior não seja apagado pelo novo.
+        # Exceção: se o novo feedback move uma fonte de prefer → avoid (ou vice-versa),
+        # ela é removida do lado oposto para evitar contradição explícita.
+        try:
+            existing = qdrant_client.retrieve(
+                collection_name=FEEDBACK_COLLECTION,
+                ids=[feedback_id],
+                with_payload=True,
+                with_vectors=False,
+            )
+            if existing and existing[0].payload:
+                ep = existing[0].payload
+                # União das listas existentes + novas, sem duplicatas
+                merged_prefer_types   = list(set(ep.get("prefer_document_types", []) + new_prefer_types)  - set(new_avoid_types))
+                merged_avoid_types    = list(set(ep.get("avoid_document_types",  []) + new_avoid_types)   - set(new_prefer_types))
+                merged_prefer_sources = list(set(ep.get("prefer_sources",        []) + new_prefer_sources) - set(new_avoid_sources))
+                merged_avoid_sources  = list(set(ep.get("avoid_sources",         []) + new_avoid_sources)  - set(new_prefer_sources))
+                merged_must_keywords  = list(set(ep.get("must_keywords",         []) + new_must_keywords))
+                # query_rewrite, response_instruction e note: o mais recente vence
+                merged_query_rewrite        = (query_rewrite or "").strip() or ep.get("query_rewrite", "")
+                merged_response_instruction = (response_instruction or "").strip() or ep.get("response_instruction", "")
+                merged_note                 = note or ep.get("note", "")
+                print(f"🔄 Feedback existente encontrado — fazendo merge para id={feedback_id}")
+            else:
+                raise ValueError("sem registro existente")
+        except Exception:
+            # Registro não existe ainda — usa só os novos valores
+            merged_prefer_types         = new_prefer_types
+            merged_avoid_types          = new_avoid_types
+            merged_prefer_sources       = new_prefer_sources
+            merged_avoid_sources        = new_avoid_sources
+            merged_must_keywords        = new_must_keywords
+            merged_query_rewrite        = (query_rewrite or "").strip()
+            merged_response_instruction = (response_instruction or "").strip()
+            merged_note                 = note or ""
+
+        # explicit_prefer_sources: fontes que o usuário explicitamente pediu para usar.
+        # Diferente de prefer_sources (soft, pode ser bypassado por score alto),
+        # explicit_prefer_sources é tratado como HARD no filtro — mesmo chunks com
+        # score alto de outras fontes são removidos quando o usuário disse explicitamente
+        # qual fonte usar. Isso garante que "use o manutencao_memorias_500.csv" seja
+        # respeitado mesmo que o Manual tenha rerank_score 9.5.
+        new_explicit_prefer = [x.strip() for x in (prefer_sources or []) if x and x.strip()]
+        try:
+            existing_ep = existing[0].payload if existing and existing[0].payload else {}
+            merged_explicit_prefer = list(set(
+                existing_ep.get("explicit_prefer_sources", []) + new_explicit_prefer
+            ) - set(merged_avoid_sources))
+        except Exception:
+            merged_explicit_prefer = new_explicit_prefer
+
         payload: Dict[str, Any] = {
-            "pergunta":              pergunta.strip(),
-            "prefer_document_types": [x.strip().lower() for x in (prefer_document_types or []) if x and x.strip()],
-            "avoid_document_types":  [x.strip().lower() for x in (avoid_document_types  or []) if x and x.strip()],
-            "prefer_sources":        [x.strip() for x in (prefer_sources or []) if x and x.strip()],
-            "avoid_sources":         [x.strip() for x in (avoid_sources  or []) if x and x.strip()],
-            "must_keywords":         [x.strip() for x in (must_keywords  or []) if x and x.strip()],
-            "query_rewrite":         (query_rewrite or "").strip(),
-            "note":                  note or "",
+            "pergunta":               pergunta.strip(),
+            "prefer_document_types":  merged_prefer_types,
+            "avoid_document_types":   merged_avoid_types,
+            "prefer_sources":         merged_prefer_sources,
+            "avoid_sources":          merged_avoid_sources,
+            "explicit_prefer_sources": merged_explicit_prefer,
+            "must_keywords":          merged_must_keywords,
+            "query_rewrite":          merged_query_rewrite,
+            "response_instruction":   merged_response_instruction,
+            "note":                   merged_note,
         }
 
         qdrant_client.upsert(
             collection_name=FEEDBACK_COLLECTION,
             points=[models.PointStruct(
-                id=str(uuid.uuid4()),
+                id=feedback_id,   # [FIX-1] ID determinístico — UPDATE, não INSERT
                 vector=emb,
                 payload=payload
             )],
             wait=True
         )
-        print("✅ Feedback salvo:", payload)
+        print(f"✅ Feedback salvo (id={feedback_id}):", payload)
         return "Feedback salvo ✅ Vou usar essas preferências em perguntas similares."
     except Exception as e:
         print(f"❌ Erro ao salvar feedback: {e}")
@@ -1175,6 +1335,141 @@ def list_sources() -> List[str]:
     except Exception as e:
         print(f"❌ Erro list_sources: {e}")
         return []
+
+
+@mcp.tool
+def get_knowledge_stats() -> str:
+    """
+    Retorna estatísticas do conhecimento acumulado pelo sistema em formato JSON:
+    - cache_count:     número de respostas confirmadas salvas no cache semântico
+    - feedback_count:  número de preferências de retrieval aprendidas com feedback
+    - docs_count:      número de documentos únicos indexados
+    - chunks_count:    número total de chunks vetorizados na base de conhecimento
+    """
+    import json as _json
+    try:
+        stats = {}
+
+        # Cache semântico — respostas confirmadas como corretas pelo usuário
+        try:
+            info = qdrant_client.get_collection(collection_name=CACHE_COLLECTION)
+            stats["cache_count"] = info.points_count or 0
+        except Exception:
+            stats["cache_count"] = 0
+
+        # Feedback de preferências — registros de prefer/avoid/instrução
+        try:
+            info = qdrant_client.get_collection(collection_name=FEEDBACK_COLLECTION)
+            stats["feedback_count"] = info.points_count or 0
+        except Exception:
+            stats["feedback_count"] = 0
+
+        # Documentos únicos indexados (conta sources distintas)
+        try:
+            sources = set()
+            offset, pages = None, 0
+            while pages < MAX_SCROLL_PAGES:
+                points, offset = qdrant_client.scroll(
+                    collection_name=COLLECTION_NAME,
+                    limit=512,
+                    offset=offset,
+                    with_payload=True,
+                    with_vectors=False,
+                )
+                for p in points:
+                    src = (p.payload or {}).get("source")
+                    if src:
+                        sources.add(str(src).strip())
+                pages += 1
+                if offset is None:
+                    break
+            stats["docs_count"] = len(sources)
+        except Exception:
+            stats["docs_count"] = 0
+
+        # Total de chunks vetorizados
+        try:
+            info = qdrant_client.get_collection(collection_name=COLLECTION_NAME)
+            stats["chunks_count"] = info.points_count or 0
+        except Exception:
+            stats["chunks_count"] = 0
+
+        return _json.dumps(stats)
+    except Exception as e:
+        print(f"❌ Erro get_knowledge_stats: {e}")
+        return _json.dumps({"cache_count": 0, "feedback_count": 0, "docs_count": 0, "chunks_count": 0})
+
+
+@mcp.tool
+def clear_learned_knowledge(target: str = "all") -> str:
+    """
+    Apaga o conhecimento acumulado pelo sistema através de feedback e confirmações.
+
+    Parâmetro target:
+      "cache"    — apaga apenas o cache de respostas confirmadas (✅ Correta)
+      "feedback" — apaga apenas as preferências de retrieval aprendidas
+      "all"      — apaga cache + feedback (padrão)
+
+    NOTA: documentos indexados e sessões de conversa NÃO são afetados.
+
+    IMPLEMENTAÇÃO: usa delete() com Filter vazio (match-all) em vez de
+    delete_collection + create_collection. O motivo é que o cliente Qdrant
+    embarcado (path=) mantém referências de coleção em memória — recriar a
+    coleção não invalida o cache interno do cliente, fazendo buscas
+    subsequentes ainda encontrarem dados "deletados". Deletar os PONTOS
+    dentro da coleção existente opera na mesma instância em memória e
+    garante que a próxima busca retorne [] imediatamente.
+    """
+    import json as _json
+
+    valid_targets = ("cache", "feedback", "all")
+    if target not in valid_targets:
+        return _json.dumps({"ok": False, "error": f"target inválido: '{target}'. Use: {valid_targets}"})
+
+    # Seletor que apaga TODOS os pontos da coleção (Filter com must=[] = match-all)
+    _match_all = models.FilterSelector(filter=models.Filter(must=[]))
+
+    results = {}
+
+    if target in ("cache", "all"):
+        try:
+            info_before = qdrant_client.get_collection(collection_name=CACHE_COLLECTION)
+            count_before = info_before.points_count or 0
+            qdrant_client.delete(
+                collection_name=CACHE_COLLECTION,
+                points_selector=_match_all,
+                wait=True,
+            )
+            info_after = qdrant_client.get_collection(collection_name=CACHE_COLLECTION)
+            count_after = info_after.points_count or 0
+            results["cache"] = {"removidos": count_before, "restantes": count_after, "ok": count_after == 0}
+            print(f"🗑️ Cache semântico: {count_before} → {count_after} pontos.")
+            if count_after > 0:
+                print(f"⚠️ Ainda restam {count_after} pontos no cache após delete.")
+        except Exception as e:
+            results["cache"] = {"ok": False, "error": str(e)}
+            print(f"❌ Erro ao limpar cache: {e}")
+
+    if target in ("feedback", "all"):
+        try:
+            info_before = qdrant_client.get_collection(collection_name=FEEDBACK_COLLECTION)
+            count_before = info_before.points_count or 0
+            qdrant_client.delete(
+                collection_name=FEEDBACK_COLLECTION,
+                points_selector=_match_all,
+                wait=True,
+            )
+            info_after = qdrant_client.get_collection(collection_name=FEEDBACK_COLLECTION)
+            count_after = info_after.points_count or 0
+            results["feedback"] = {"removidos": count_before, "restantes": count_after, "ok": count_after == 0}
+            print(f"🗑️ Feedback: {count_before} → {count_after} pontos.")
+            if count_after > 0:
+                print(f"⚠️ Ainda restam {count_after} pontos no feedback após delete.")
+        except Exception as e:
+            results["feedback"] = {"ok": False, "error": str(e)}
+            print(f"❌ Erro ao limpar feedback: {e}")
+
+    return _json.dumps(results)
 
 
 def _delete_cache_entries_that_reference_filename(filename: str) -> int:
@@ -1423,7 +1718,9 @@ def ask_question(query: str, force_fresh: bool = False, chat_history: Optional[L
         #   >= 4.0 → equilibrado (padrão)
         #   >= 3.0 → mais permissivo
         # --------------------------------------------------------------
-        MIN_RERANK_SCORE_TO_ANSWER = 4.0  # escala 1-10
+        MIN_RERANK_SCORE_TO_ANSWER = 3.0  # [FIX] reduzido de 4.0: após normalização min-max,
+        # o melhor chunk sempre recebe 10, mas em lotes homogêneos (ex.: só CSV) o 6º chunk
+        # pode ficar abaixo de 4.0. 3.0 mantém proteção contra alucinações sem bloquear CSVs.
 
         if relevant_hits:
             best_rerank_score = max(
@@ -1445,10 +1742,28 @@ def ask_question(query: str, force_fresh: bool = False, chat_history: Optional[L
         # 4) Aplica filtros de feedback (prefer/avoid)
         # --------------------------------------------------------------
         if feedback_payload and relevant_hits:
-            prefer_types   = set((feedback_payload.get("prefer_document_types") or []))
-            avoid_types    = set((feedback_payload.get("avoid_document_types")  or []))
-            prefer_sources = set((feedback_payload.get("prefer_sources")        or []))
-            avoid_sources  = set((feedback_payload.get("avoid_sources")         or []))
+            prefer_types         = set((feedback_payload.get("prefer_document_types")   or []))
+            avoid_types          = set((feedback_payload.get("avoid_document_types")    or []))
+            prefer_sources       = set((feedback_payload.get("prefer_sources")          or []))
+            avoid_sources        = set((feedback_payload.get("avoid_sources")           or []))
+            explicit_prefer_srcs = set((feedback_payload.get("explicit_prefer_sources") or []))
+
+            # ----------------------------------------------------------
+            # REGRA HARD-PREFER: mantém APENAS chunks das fontes que o usuário
+            # pediu explicitamente ("use o documento X"). Diferente do prefer
+            # soft, este filtro remove TUDO que não for a fonte pedida —
+            # incluindo chunks com rerank_score alto de outras fontes.
+            # Só ativa quando explicit_prefer_sources está preenchido.
+            # ----------------------------------------------------------
+            if explicit_prefer_srcs:
+                hard_filtered = [h for h in relevant_hits if _hit_source(h) in explicit_prefer_srcs]
+                if hard_filtered:
+                    relevant_hits = hard_filtered
+                    print(f"📌 Hard-prefer aplicado: apenas fontes {explicit_prefer_srcs} "
+                          f"({len(relevant_hits)} chunks retidos)")
+                else:
+                    print(f"⚠️ Hard-prefer: nenhum chunk encontrado para {explicit_prefer_srcs} "
+                          f"— mantendo todos os {len(relevant_hits)} chunks para não zertar o contexto")
 
             # ----------------------------------------------------------
             # REGRA HARD: remove o que foi explicitamente evitado.
@@ -1475,6 +1790,13 @@ def ask_question(query: str, force_fresh: bool = False, chat_history: Optional[L
             # Aplicada SOMENTE sobre os chunks que passaram pelo avoid.
             # Chunks com rerank_score >= RERANK_PREFER_BYPASS são
             # preservados do prefer-filter, mas NUNCA do avoid-filter.
+            #
+            # [FIX-3] Filtros independentes com UNIÃO (OR), não sequenciais (AND).
+            # Lógica anterior aplicava prefer_types primeiro e prefer_sources depois
+            # sobre o resultado já filtrado — chunks preferidos por fonte mas de
+            # tipo diferente eram descartados pelo primeiro filtro antes de o segundo
+            # poder resgatá-los. Agora cada critério é avaliado de forma independente
+            # sobre o conjunto original e o resultado final é a UNIÃO dos dois.
             # ----------------------------------------------------------
             def _rerank_score(h) -> float:
                 return float((h.payload or {}).get("_rerank_score", 0.0))
@@ -1484,15 +1806,20 @@ def ask_question(query: str, force_fresh: bool = False, chat_history: Optional[L
             # Chunks com score menor: sujeitos ao prefer-filter
             low_score_hits  = [h for h in filtered if _rerank_score(h) < RERANK_PREFER_BYPASS]
 
-            if not document_type and prefer_types:
-                only_pref = [h for h in low_score_hits if _hit_doc_type(h) in prefer_types]
-                if only_pref:
-                    low_score_hits = only_pref
-
-            if prefer_sources:
-                only_src = [h for h in low_score_hits if _hit_source(h) in prefer_sources]
-                if only_src:
-                    low_score_hits = only_src
+            if not document_type and (prefer_types or prefer_sources):
+                # [FIX-3] Avalia cada critério de forma INDEPENDENTE sobre low_score_hits.
+                # IMPORTANTE: ScoredPoint nao e hashavel — nao pode entrar em set().
+                # Usamos indices inteiros (posicao na lista) para fazer a uniao sem
+                # depender de hashabilidade do objeto Qdrant.
+                idx_by_type = set()
+                idx_by_src  = set()
+                if prefer_types:
+                    idx_by_type = {i for i, h in enumerate(low_score_hits) if _hit_doc_type(h) in prefer_types}
+                if prefer_sources:
+                    idx_by_src  = {i for i, h in enumerate(low_score_hits) if _hit_source(h) in prefer_sources}
+                combined_idx = idx_by_type | idx_by_src
+                if combined_idx:
+                    low_score_hits = [h for i, h in enumerate(low_score_hits) if i in combined_idx]
 
             # Recombina: chunks de alta pontuação sempre presentes + baixos filtrados
             filtered = high_score_hits + [
@@ -1519,7 +1846,7 @@ def ask_question(query: str, force_fresh: bool = False, chat_history: Optional[L
         relevant_hits    = [h for h in relevant_hits if _hit_doc_type(h) == document_type]
         context_payloads = [h.payload for h in relevant_hits]
         if not context_payloads:
-            return f"Não encontrei documentos do tipo '{document_type}' para responder."
+            return f"Não encontrei documentos do tipo '{document_type}' para responder."  # [FIX-2] prefixo uniforme
 
     # ------------------------------------------------------------------
     # 5) Fallback de busca expandida (usa must_keywords / query_rewrite do feedback)
@@ -1567,16 +1894,20 @@ def ask_question(query: str, force_fresh: bool = False, chat_history: Optional[L
                     if not (_hit_source(h)   in avoid_sources_fb and avoid_sources_fb)
                     and not (_hit_doc_type(h) in avoid_types_fb   and avoid_types_fb)
                 ]
-                if not document_type and prefer_types_fb:
-                    only_pt = [h for h in filtered2 if _hit_doc_type(h) in prefer_types_fb]
-                    if only_pt:
-                        high_fb   = [h for h in filtered2 if h not in only_pt and _is_high_score_fb(h)]
-                        filtered2 = only_pt + high_fb
-                if prefer_sources_fb:
-                    only_ps = [h for h in filtered2 if _hit_source(h) in prefer_sources_fb]
-                    if only_ps:
-                        high_fb   = [h for h in filtered2 if h not in only_ps and _is_high_score_fb(h)]
-                        filtered2 = only_ps + high_fb
+                # [FIX-3] Mesma logica de uniao independente — usando indices (ScoredPoint nao e hashavel)
+                if not document_type and (prefer_types_fb or prefer_sources_fb):
+                    low_fb  = [h for h in filtered2 if not _is_high_score_fb(h)]
+                    high_fb = [h for h in filtered2 if _is_high_score_fb(h)]
+                    idx_type_fb = set()
+                    idx_src_fb  = set()
+                    if prefer_types_fb:
+                        idx_type_fb = {i for i, h in enumerate(low_fb) if _hit_doc_type(h) in prefer_types_fb}
+                    if prefer_sources_fb:
+                        idx_src_fb  = {i for i, h in enumerate(low_fb) if _hit_source(h) in prefer_sources_fb}
+                    combined_idx_fb = idx_type_fb | idx_src_fb
+                    if combined_idx_fb:
+                        low_fb = [h for i, h in enumerate(low_fb) if i in combined_idx_fb]
+                    filtered2 = high_fb + low_fb
 
                 relevant_hits    = filtered2
                 context_payloads = [h.payload for h in filtered2]
@@ -1587,7 +1918,7 @@ def ask_question(query: str, force_fresh: bool = False, chat_history: Optional[L
             print(f"⚠️ Erro no fallback de busca: {e}")
 
     if not context_payloads:
-        return "Não encontrei informação relevante nos documentos para responder."
+        return "Não encontrei informação relevante nos documentos para responder."  # [FIX-2] prefixo uniforme
 
     # ------------------------------------------------------------------
     # Monta contexto e fontes
@@ -1628,16 +1959,35 @@ def ask_question(query: str, force_fresh: bool = False, chat_history: Optional[L
     # O granite4 performa melhor quando o prompt e o contexto estão no
     # mesmo idioma. Adicionamos instruções de tom: técnico, objetivo,
     # estruturado e honesto sobre limitações.
-    system_prompt = """Você é um assistente técnico especializado em processos RMA e no sistema iRMA.
-Seu papel é responder perguntas dos usuários com base exclusivamente nos documentos fornecidos.
+    # [FIX-INSTRUCAO] Le response_instruction do feedback aprendido e injeta
+    # no system_prompt. Permite que o usuario ensine o formato desejado
+    # (ex.: "responda em uma frase", "seja conciso") e o LLM aplique
+    # na proxima resposta para perguntas similares.
+    _resp_instruction = ""
+    if feedback_payload:
+        _resp_instruction = (feedback_payload.get("response_instruction") or "").strip()
 
-Diretrizes de comportamento:
-- Seja técnico, objetivo e preciso.
-- Estruture respostas longas com subtítulos ou listas quando facilitar a leitura.
-- Se a informação não estiver no contexto, diga claramente: "Não encontrei essa informação nos documentos disponíveis."
-- Nunca invente informações ou extrapole além do que está nos documentos.
-- Não mencione nomes de arquivos ou fontes dentro da resposta — as fontes serão listadas separadamente.
-- Responda sempre em português do Brasil."""
+    _base_system = (
+        "Você é um assistente técnico especializado em processos RMA e no sistema iRMA.\n"
+        "Seu papel é responder perguntas dos usuários com base exclusivamente nos documentos fornecidos.\n\n"
+        "Diretrizes de comportamento:\n"
+        "- Seja técnico, objetivo e preciso.\n"
+        "- Estruture respostas longas com subtítulos ou listas quando facilitar a leitura.\n"
+        "- Se a informação não estiver no contexto, diga claramente: \"Não encontrei essa informação nos documentos disponíveis.\"\n"
+        "- Nunca invente informações ou extrapole além do que está nos documentos.\n"
+        "- Não mencione nomes de arquivos ou fontes dentro da resposta.\n"
+        "- Responda sempre em português do Brasil."
+    )
+
+    if _resp_instruction:
+        system_prompt = (
+            _base_system
+            + "\n\nINSTRUÇÃO DE FORMATO (preferência do usuário para esta pergunta):\n"
+            + _resp_instruction
+        )
+        print(f"📋 response_instruction aplicada: \"{_resp_instruction[:80]}\"")
+    else:
+        system_prompt = _base_system
 
     # [MELHORIA] Histórico de conversa: inclui as últimas N trocas para
     # permitir perguntas de acompanhamento ("e as etapas seguintes?").
